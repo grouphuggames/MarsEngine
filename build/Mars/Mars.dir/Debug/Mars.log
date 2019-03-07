@@ -1,5 +1,0 @@
-﻿  Building Custom Rule C:/MarsEngine/Mars/CMakeLists.txt
-  CMake does not need to re-run because C:/MarsEngine/build/Mars/CMakeFiles/generate.stamp is up-to-date.
-  Test.cpp
-     Creating library C:/MarsEngine/build/Mars/Debug/Mars.lib and object C:/MarsEngine/build/Mars/Debug/Mars.exp
-  Mars.vcxproj -> C:\MarsEngine\build\Mars\Debug\Mars.dll

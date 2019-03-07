@@ -7,4 +7,5 @@ namespace Mars
 void main()
 {
     Mars::Print();
+	Mars::Print();
 }

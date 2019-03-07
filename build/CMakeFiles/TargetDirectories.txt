@@ -1,4 +1,0 @@
-C:/MarsEngine/build/CMakeFiles/ALL_BUILD.dir
-C:/MarsEngine/build/CMakeFiles/ZERO_CHECK.dir
-C:/MarsEngine/build/Mars/CMakeFiles/Mars.dir
-C:/MarsEngine/build/TestGame/CMakeFiles/TestGame.dir
