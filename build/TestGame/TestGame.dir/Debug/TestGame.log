@@ -1,0 +1,4 @@
+﻿  Building Custom Rule C:/MarsEngine/TestGame/CMakeLists.txt
+  CMake does not need to re-run because C:/MarsEngine/build/TestGame/CMakeFiles/generate.stamp is up-to-date.
+  Game.cpp
+  TestGame.vcxproj -> C:\MarsEngine\build\TestGame\Debug\TestGame.exe
