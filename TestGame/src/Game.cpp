@@ -1,11 +1,17 @@
-namespace Mars
-{
-    __declspec(dllimport) void Print();
-}
+#include <Mars.h>
 
 
-void main()
+class Game : public Mars::Application
 {
-    Mars::Print();
-	Mars::Print();
+public:
+	Game()
+	{}
+
+	~Game()
+	{}
+};
+
+Mars::Application* Mars::CreateApplication()
+{
+	return new Game();
 }
