@@ -14,6 +14,25 @@ namespace Mars
 
     void Application::Run()
     {
-        while (true);
+		// this needs to be if guarded
+		// WIN32 code
+		MSG msg;
+		ZeroMemory(&msg, sizeof(MSG));
+
+		while (true)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				if (msg.message == WM_QUIT)
+					break;
+
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				// run game code
+			}
+		}
     }
 }
