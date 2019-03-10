@@ -1,4 +1,5 @@
 file(GLOB_RECURSE sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
+
 add_executable(TestGame ${sources})
 target_link_libraries(TestGame Mars)
 target_include_directories(TestGame PUBLIC "${CMAKE_SOURCE_DIR}/Mars/src")
