@@ -14,12 +14,10 @@ namespace Mars
 
     void Application::Run()
     {
-		// this needs to be if guarded
-		// WIN32 code
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
 
-		while (true)
+		while (running)
 		{
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{

@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include <iostream>
+#include <Windows.h>
 
 
 namespace Mars
@@ -17,25 +18,35 @@ namespace Mars
 	};
 }
 
-#define MARS_CORE_INFO(...)	std::cout << "CORE INFO: "; \
+#ifdef ME_PLATFORM_WINDOWS
+#define MARS_CORE_INFO(...)		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN); \
+								std::cout << "CORE INFO: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__);
-#define MARS_CORE_INFO_EXTRA(...)	std::cout << "CORE INFO EXTRA: "; \
+#define MARS_CORE_INFO_EXTRA(...)	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN); \
+								std::cout << "CORE INFO EXTRA: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
-#define MARS_CORE_WARN(...)	std::cout << "CORE WARNING: "; \
+#define MARS_CORE_WARN(...)		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE); \
+								std::cout << "CORE WARNING: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
-#define MARS_CORE_ERROR(...)	std::cout << "CORE ERROR: "; \
+#define MARS_CORE_ERROR(...)	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED); \
+								std::cout << "CORE ERROR: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
-#define MARS_INFO(...)		std::cout << "APP INFO: "; \
+#define MARS_INFO(...)			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN); \
+								std::cout << "APP INFO: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__);
-#define MARS_INFO_EXTRA(...)		std::cout << "APP INFO EXTRA: "; \
+#define MARS_INFO_EXTRA(...)	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN); \
+								std::cout << "APP INFO EXTRA: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
-#define MARS_WARN(...)		std::cout << "APP WARNING: "; \
+#define MARS_WARN(...)			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE); \
+								std::cout << "APP WARNING: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
-#define MARS_ERROR(...)		std::cout << "APP ERROR: "; \
+#define MARS_ERROR(...)			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED); \
+								std::cout << "APP ERROR: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#endif
