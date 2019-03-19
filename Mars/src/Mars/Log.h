@@ -1,7 +1,5 @@
 #pragma once
 #include "Core.h"
-#include <iostream>
-#include <Windows.h>
 
 
 namespace Mars
@@ -18,7 +16,6 @@ namespace Mars
 	};
 }
 
-#ifdef ME_PLATFORM_WINDOWS
 #define MARS_CORE_INFO(...)		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN); \
 								std::cout << "CORE INFO: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__);
@@ -49,4 +46,3 @@ namespace Mars
 								std::cout << "APP ERROR: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
-#endif

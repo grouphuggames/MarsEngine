@@ -9,7 +9,7 @@
 
 extern Mars::Application* Mars::CreateApplication();
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int32_t WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	auto game = Mars::CreateApplication();
 
@@ -17,6 +17,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CreateWin32DebugConsole();
 #endif
 	CreateWin32Surface(hInstance, nShowCmd);
+
+	SYSTEM_INFO system_info = {};
+	int32_t core_count = 0;
+	GetSystemInfo(&system_info);
+	core_count = system_info.dwNumberOfProcessors;
 
 	MARS_CORE_INFO("Systems Setup OK!");
 
