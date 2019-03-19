@@ -1,5 +1,6 @@
 #pragma once
 #include "Log.h"
+#include <unordered_map>
 
 
 enum MARS_KEY
@@ -39,7 +40,20 @@ enum MARS_MOUSE
 	MARS_MOUSE_BUTTON_RIGHT = 0x02
 };
 
-extern void TestFunc();
+using InputFunc = void(*)(void);
+
+extern std::unordered_map<int32_t, InputFunc> InputFuncs = {};
+
+void SetInput(MARS_KEY input, InputFunc func)
+{
+	InputFuncs.insert({ input, func });
+}
+
+void SetInput(MARS_MOUSE input, InputFunc func)
+{
+	InputFuncs.insert({ input, func });
+}
+
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -52,95 +66,291 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 			break;
 		case MARS_A:
-			MARS_CORE_INFO("A Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_A)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_B:
-			MARS_CORE_INFO("B Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_B)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_C:
-			MARS_CORE_INFO("C Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_C)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_D:
-			MARS_CORE_INFO("D Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_D)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_E:
-			MARS_CORE_INFO("E Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_E)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_F:
-			MARS_CORE_INFO("F Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_F)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_G:
-			MARS_CORE_INFO("G Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_G)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_H:
-			MARS_CORE_INFO("H Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_H)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_I:
-			MARS_CORE_INFO("I Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_I)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_J:
-			MARS_CORE_INFO("J Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_J)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_K:
-			MARS_CORE_INFO("K Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_K)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_L:
-			MARS_CORE_INFO("L Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_L)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_M:
-			MARS_CORE_INFO("M Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_M)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_N:
-			MARS_CORE_INFO("N Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_N)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_O:
-			MARS_CORE_INFO("O Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_O)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_P:
-			MARS_CORE_INFO("P Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_P)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_Q:
-			MARS_CORE_INFO("Q Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_Q)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_R:
-			MARS_CORE_INFO("R Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_R)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_S:
-			MARS_CORE_INFO("S Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_S)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_T:
-			MARS_CORE_INFO("T Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_T)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_U:
-			MARS_CORE_INFO("U Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_U)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_V:
-			MARS_CORE_INFO("V Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_V)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_W:
-			MARS_CORE_INFO("W Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_W)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_X:
-			MARS_CORE_INFO("X Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_X)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_Y:
-			MARS_CORE_INFO("Y Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_Y)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		case MARS_Z:
-			MARS_CORE_INFO("Z Key Pressed!");
+			try
+			{
+				InputFuncs.at(MARS_Z)();
+			}
+			catch (const std::exception&)
+			{
+				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+			}
 			break;
 		default:
-			MARS_CORE_INFO_EXTRA("KEY CODE NOT YET SET FOR INPUT!!");
+			MARS_CORE_ERROR("KEY CODE NOT YET SET FOR INPUT!!");
 			break;
 		}
 		break;
 
 	case WM_LBUTTONDOWN:
-		TestFunc();
+		try
+		{
+			InputFuncs.at(MARS_MOUSE_BUTTON_LEFT)();
+		}
+		catch (const std::exception&)
+		{
+			MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+		}
 		break;
 
 	case WM_RBUTTONDOWN:
-		MARS_CORE_INFO("Right Mouse Button Pressed!");
+		try
+		{
+			InputFuncs.at(MARS_MOUSE_BUTTON_RIGHT)();
+		}
+		catch (const std::exception&)
+		{
+			MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
+		}
 		break;
 	}
 
@@ -186,7 +396,9 @@ void CreateWin32Surface(HINSTANCE hInstance, int nShowCmd)
 	hwnd = CreateWindowEx(NULL, window_name, window_title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, hInstance, NULL);
 
 	if (!hwnd)
+	{
 		MARS_CORE_ERROR("Error Creating WIN32 Window!!");
+	}
 
 	if (fullscreen)
 		SetWindowLong(hwnd, GWL_STYLE, 0);
