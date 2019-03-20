@@ -1,4 +1,5 @@
 #include <Mars.h>
+#include <Mars/vec4.h>
 
 
 class Game : public Mars::Application
@@ -11,13 +12,15 @@ public:
 	{}
 };
 
-// as it is currently implemented, in order to change the name of the function in the game, the same change must be recorded in the engine
-// to avoid this, maybe set input functions in an array, set them to index values in the engine
-// just make sure that the index is set properly in the game
-// extensive documentation will be needed...
+// external functions...they go to the engine and are a good way to get info from the game back into the engine
 void Fire()
 {
-	MARS_INFO("Fire!!");
+	MARS_INFO("maria eats guava");
+
+	Mars::vec4 v1(1.f);
+	Mars::vec4 v2(2.f, 1.f, 45.32f, 678.34f);
+	Mars::vec4 v3 = v1 + v2;
+	Mars::vec4 v4;
 }
 
 void AimDownSight()
@@ -30,7 +33,6 @@ void MoveForward()
 	MARS_INFO("Moving Forward!");
 }
 
-// external functions...they go to the engine and are a good way to get info from the game back into the engine
 Mars::Application* Mars::CreateApplication()
 {
 	SetInput(MARS_MOUSE_BUTTON_LEFT, Fire);
