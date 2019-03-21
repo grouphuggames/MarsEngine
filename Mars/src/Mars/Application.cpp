@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "vec3.h"
 #include "vec4.h"
 #include <chrono>
 
@@ -18,9 +19,9 @@ namespace Mars
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
 
-		vec4 s1(1.f);
-		vec4 s2(3.f);
-		vec4 s3;
+		vec3 s1(1.f);
+		vec3 s2(1.f, 3.f, 3.f);
+		vec3 s3;
 
 		while (game_state.running)
 		{
@@ -37,13 +38,13 @@ namespace Mars
 
 			// run game code
 
-			for (u64 i = 0; i < 1000000000000; i++)
-			{
-				s3 = s2 / 2.f;
-			}
+			vec3 l = vec3::Cross(s1, s2);
+			f32 x = l.x();
+			f32 y = l.y();
+			f32 z = l.z();
 
 			auto frame_stop = std::chrono::high_resolution_clock::now();
-			f32 delta = std::chrono::duration_cast<std::chrono::milliseconds>(frame_stop - frame_start).count();		// --this needs to be in milliseconds for framerate to be correct... if it does not say milliseconds, it is because of profiling/debugging efforts
+			f32 delta = std::chrono::duration_cast<std::chrono::nanoseconds>(frame_stop - frame_start).count();		// --this needs to be in milliseconds for framerate to be correct... if it does not say milliseconds, it is because of profiling/debugging efforts
 			game_state.framerate = 1000.f / delta;
 			MARS_CORE_INFO(game_state.framerate);
 		}
