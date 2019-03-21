@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <Windows.h>
+#include <cstdint>
 
 
 #ifdef ME_BUILD_DLL
@@ -13,6 +14,9 @@
 
 
 using s32 = int;
+using u32 = unsigned int;
+using s64 = long long;
+using u64 = unsigned long long;
 using f32 = float;
 
 
@@ -64,7 +68,7 @@ namespace Mars
 
 struct
 {
-	char window_title[64] = "GameWindow          ";
+	const char* window_title = "GameWindow";
 	s32 width = 800;
 	s32 height = 600;
 	f32 framerate = 0.f;

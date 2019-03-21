@@ -16,11 +16,6 @@ public:
 void Fire()
 {
 	MARS_INFO("maria eats guava");
-
-	Mars::vec4 v1(1.f);
-	Mars::vec4 v2(2.f, 1.f, 45.32f, 678.34f);
-	Mars::vec4 v3 = v1 + v2;
-	Mars::vec4 v4;
 }
 
 void AimDownSight()

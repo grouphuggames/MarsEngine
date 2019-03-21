@@ -1,8 +1,6 @@
 #pragma once
 #include "Surface.h"
-#ifdef _DEBUG
 #include "Debug.h"
-#endif
 
 extern Mars::Application* Mars::CreateApplication();
 
@@ -15,9 +13,7 @@ s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	auto game = Mars::CreateApplication();
 
-#ifdef _DEBUG
 	Mars::CreateWin32DebugConsole();
-#endif
 	Mars::CreateWin32Surface(hInstance, nShowCmd);
 
 	game->Run();

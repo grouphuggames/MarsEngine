@@ -18,6 +18,10 @@ namespace Mars
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
 
+		vec4 s1(1.f);
+		vec4 s2(3.f);
+		vec4 s3;
+
 		while (game_state.running)
 		{
 			auto frame_start = std::chrono::high_resolution_clock::now();
@@ -33,16 +37,15 @@ namespace Mars
 
 			// run game code
 
-			for (s32 i = 0; i < 100000; i++)
+			for (u64 i = 0; i < 100000; i++)
 			{
-				vec4 v1;
-				vec4 v2(3.f);
-				vec4 v3 = v1 + v2;
+				s3 = s2 / 2.f;
 			}
 
 			auto frame_stop = std::chrono::high_resolution_clock::now();
-			f32 delta = std::chrono::duration_cast<std::chrono::milliseconds>(frame_stop - frame_start).count();
+			f32 delta = std::chrono::duration_cast<std::chrono::milliseconds>(frame_stop - frame_start).count();		// --this needs to be in milliseconds for framerate to be correct... if it does not say milliseconds, it is because of profiling/debugging efforts
 			game_state.framerate = 1000.f / delta;
+			MARS_CORE_INFO(game_state.framerate);
 		}
     }
 }
