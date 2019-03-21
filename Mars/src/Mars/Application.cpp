@@ -37,7 +37,7 @@ namespace Mars
 
 			// run game code
 
-			for (u64 i = 0; i < 100000; i++)
+			for (u64 i = 0; i < 1000000000000; i++)
 			{
 				s3 = s2 / 2.f;
 			}
