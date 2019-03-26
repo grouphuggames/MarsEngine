@@ -36,17 +36,10 @@ namespace Mars
 				DispatchMessage(&msg);
 			}
 
-			// run game code
-
-			vec3 l = vec3::Cross(s1, s2);
-			f32 x = l.x();
-			f32 y = l.y();
-			f32 z = l.z();
-
 			auto frame_stop = std::chrono::high_resolution_clock::now();
-			f32 delta = std::chrono::duration_cast<std::chrono::nanoseconds>(frame_stop - frame_start).count();		// --this needs to be in milliseconds for framerate to be correct... if it does not say milliseconds, it is because of profiling/debugging efforts
+			f32 delta = std::chrono::duration_cast<std::chrono::milliseconds>(frame_stop - frame_start).count();		// --this needs to be in milliseconds for framerate to be correct... if it does not say milliseconds, it is because of profiling/debugging efforts
 			game_state.framerate = 1000.f / delta;
-			MARS_CORE_INFO(game_state.framerate);
+			// MARS_CORE_INFO(game_state.framerate);
 		}
     }
 }

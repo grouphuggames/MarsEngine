@@ -1,12 +1,18 @@
 #include <Mars.h>
-#include <Mars/vec4.h>
+#include <Mars/MVector.h>
 
 
 class Game : public Mars::Application
 {
 public:
 	Game()
-	{}
+	{
+		MVector<s32> vec1(3);
+		vec1.PushBack(1);
+
+		bool ay = vec1.Find(2);
+		s32 a = vec1.Size();
+	}
 
 	~Game()
 	{}
