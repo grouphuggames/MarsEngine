@@ -44,12 +44,25 @@ namespace Mars
 			return a;
 		}
 
+		__forceinline friend vec3 operator*(f32 a, vec3 b)
+		{
+			__m128 tmp = _mm_set1_ps(a);
+			b.data = _mm_mul_ps(b.data, tmp);
+
+			return b;
+		}
+
 		__forceinline friend vec3 operator/(vec3 a, f32 b)		// might be faster way to do this... _mm_set1_ps(1 / b); _mm_mul_ps(a.data, b); AND _mm_set1_ps(_mm_rcp_ps(b)); _mm_mul_ps(a.data, b); were both same speed
 		{
 			__m128 tmp = _mm_set1_ps(b);
 			a.data = _mm_div_ps(a.data, tmp);
 
 			return a;
+		}
+
+		friend std::ostream& operator<<(std::ostream& os, vec3 a)
+		{
+			return os << "{ " << a.x() << ", " << a.y() << ", " << a.z() << " }";
 		}
 
 		__forceinline f32 x() const

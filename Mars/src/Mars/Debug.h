@@ -93,7 +93,6 @@ namespace Mars
 				}
 			}
 			MARS_CORE_INFO("Hot reload success");
-			MARS_CORE_INFO(thisisavariable);
 		}
 		else
 		{

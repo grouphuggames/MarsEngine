@@ -20,8 +20,6 @@ using s64 = int64_t;
 using u64 = uint64_t;
 using f32 = float;
 
-s32 thisisavariable = 3;
-
 namespace Mars
 {
 	class MARS_API Log
