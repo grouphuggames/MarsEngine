@@ -13,12 +13,14 @@
 #endif
 
 
-using s32 = int;
-using u32 = unsigned int;
-using s64 = long long;
-using u64 = unsigned long long;
+using u8 = uint8_t;
+using s32 = int32_t;
+using u32 = uint32_t;
+using s64 = int64_t;
+using u64 = uint64_t;
 using f32 = float;
 
+s32 thisisavariable = 3;
 
 namespace Mars
 {

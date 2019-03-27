@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "vec3.h"
 #include "vec4.h"
+#include "Debug.h"
 #include <chrono>
 
 
@@ -18,10 +19,6 @@ namespace Mars
 
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
-
-		vec3 s1(1.f);
-		vec3 s2(1.f, 3.f, 3.f);
-		vec3 s3;
 
 		while (game_state.running)
 		{
