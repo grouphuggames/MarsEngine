@@ -28,6 +28,8 @@ namespace Mars
 		MVector<T>() : capacity(10), size(0) { data = new T[capacity]; }
 		MVector<T>(s32 _size) : capacity(_size + 1), size(0) { data = new T[capacity]; }
 
+		T &MVector<T>::operator[](s32 index) { return data[index]; }
+
 		s32 Size() const { return size; }
 
 		T* begin() { return &data[0]; }
@@ -43,7 +45,15 @@ namespace Mars
 			return false;
 		}
 
-		T &MVector<T>::operator[](s32 index) { return data[index]; }
+		s32 FindIndex(T t)
+		{
+			for (s32 i = 0; i < size; ++i)
+			{
+				if (t == data[i]) return i;
+			}
+
+			return -1;
+		}
 
 		void PushBack(T val)
 		{
@@ -51,6 +61,11 @@ namespace Mars
 
 			data[size] = val;
 			++size;
+		}
+
+		void Remove(s32 index)
+		{
+			*this[index] = NULL;
 		}
 
 		~MVector() { delete[] data; }

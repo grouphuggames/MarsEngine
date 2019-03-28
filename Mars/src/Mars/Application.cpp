@@ -2,7 +2,7 @@
 #include "vec3.h"
 #include "vec4.h"
 #include "Debug.h"
-#include <chrono>
+#include "Utils.h"
 
 
 namespace Mars
@@ -22,7 +22,9 @@ namespace Mars
 
 		while (game_state.running)
 		{
-			auto frame_start = std::chrono::high_resolution_clock::now();
+			TimerInfo info = {};
+			info.time_scale = MARS_TIME::MARS_MILLISECOND;
+			StartTimer(info);
 
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
@@ -33,10 +35,9 @@ namespace Mars
 				DispatchMessage(&msg);
 			}
 
-			auto frame_stop = std::chrono::high_resolution_clock::now();
-			f32 delta = std::chrono::duration_cast<std::chrono::milliseconds>(frame_stop - frame_start).count();		// --this needs to be in milliseconds for framerate to be correct... if it does not say milliseconds, it is because of profiling/debugging efforts
-			game_state.framerate = 1000.f / delta;
-			// MARS_CORE_INFO(game_state.framerate);
+			StopTimer(info);
+			game_state.framerate = 1000.f / info.time_delta;
+			MARS_CORE_INFO(game_state.framerate);
 		}
     }
 }
