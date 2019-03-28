@@ -13,12 +13,13 @@ namespace Mars
 
 		void Resize(s32 sz)
 		{
-			if (sz <= capacity) return;
+			//if (sz <= capacity) return;
 
 			T* new_arr = new T[sz];
 
-			for (s32 i = 0; i < capacity; ++i) { new_arr[i] = data[i]; }
+			for (s32 i = 0; i < sz; ++i) { new_arr[i] = data[i]; }
 			capacity = sz;
+			size = sz;
 
 			delete[] data;
 			data = new_arr;
@@ -28,12 +29,12 @@ namespace Mars
 		MVector<T>() : capacity(10), size(0) { data = new T[capacity]; }
 		MVector<T>(s32 _size) : capacity(_size + 1), size(0) { data = new T[capacity]; }
 
-		T &MVector<T>::operator[](s32 index) { return data[index]; }
-
 		s32 Size() const { return size; }
 
 		T* begin() { return &data[0]; }
 		T* end() { return &data[size]; }
+
+		T &MVector<T>::operator[](s32 index) { return data[index]; }
 
 		bool Find(T t)
 		{
@@ -65,7 +66,8 @@ namespace Mars
 
 		void Remove(s32 index)
 		{
-			*this[index] = NULL;
+			data[index] = data[size - 1];
+			Resize(size - 1);
 		}
 
 		~MVector() { delete[] data; }

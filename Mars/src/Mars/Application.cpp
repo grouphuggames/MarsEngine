@@ -23,7 +23,7 @@ namespace Mars
 		while (game_state.running)
 		{
 			TimerInfo info = {};
-			info.time_scale = MARS_TIME::MARS_MILLISECOND;
+			info.time_scale = MARS_TIME::MARS_MILLISECOND;		// for framerate timer, this must be set to milliseconds
 			StartTimer(info);
 
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -37,7 +37,7 @@ namespace Mars
 
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
-			MARS_CORE_INFO(game_state.framerate);
+			// MARS_CORE_INFO(game_state.framerate);
 		}
     }
 }

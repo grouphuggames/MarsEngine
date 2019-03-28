@@ -1,5 +1,6 @@
 #include <Mars.h>
 #include <Mars/MMath.h>
+#include <Mars/MVector.h>
 
 
 class Game : public Mars::Application
@@ -15,13 +16,11 @@ void Fire2();
 
 void Fire()
 {
-	MARS_INFO(HALF_PI);
 	Mars::SetInput(Mars::MARS_MOUSE_BUTTON_LEFT, Fire2);
 }
 
 void Fire2()
 {
-	MARS_INFO(PI);
 	Mars::SetInput(Mars::MARS_MOUSE_BUTTON_LEFT, Fire);
 }
 
