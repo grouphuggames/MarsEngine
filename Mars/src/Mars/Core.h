@@ -76,3 +76,8 @@ struct
 	bool running = true;
 	bool fullscreen = false;
 } game_state;
+
+struct
+{
+	s32 core_count;
+} system_info;

@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-#include <cmath>
+#include "MMath.h"
 #include <xmmintrin.h>	// SSE2 instructions
 
 #define SHUFFLE3(V, X,Y,Z) vec3(_mm_shuffle_ps((V).data, (V).data, _MM_SHUFFLE(Z,Z,Y,X)))

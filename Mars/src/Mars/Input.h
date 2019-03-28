@@ -47,12 +47,18 @@ namespace Mars
 
 	void SetInput(MARS_KEY input, InputFunc func)
 	{
-		InputFuncs.insert({ input, func });
+		if (InputFuncs.find(input) == InputFuncs.end())
+			InputFuncs.insert({ input, func });
+		else
+			InputFuncs.at(input) = func;
 	}
 
 	void SetInput(MARS_MOUSE input, InputFunc func)
 	{
-		InputFuncs.insert({ input, func });
+		if (InputFuncs.find(input) == InputFuncs.end())
+			InputFuncs.insert({ input, func });
+		else
+			InputFuncs.at(input) = func;
 	}
 
 	LRESULT CALLBACK ProcessInput(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

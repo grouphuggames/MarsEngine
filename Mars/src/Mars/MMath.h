@@ -2,8 +2,6 @@
 #include "Core.h"
 #include <chrono>
 #include <random>
-#include "vec3.h"
-#include "vec4.h"
 
 
 namespace Mars
