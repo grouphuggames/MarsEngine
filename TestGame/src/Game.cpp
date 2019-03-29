@@ -1,6 +1,7 @@
 #include <Mars.h>
 #include <Mars/MMath.h>
 #include <Mars/MVector.h>
+#include <Mars/Audio.h>
 
 
 class Game : public Mars::Application
@@ -16,6 +17,9 @@ void Fire2();
 
 void Fire()
 {
+	Mars::Audio audio;
+	audio.Init();
+	audio.PlayAudio("..\\..\\Mars\\res\\music.wav");
 	Mars::SetInput(Mars::MARS_MOUSE_BUTTON_LEFT, Fire2);
 }
 

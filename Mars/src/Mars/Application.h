@@ -10,7 +10,7 @@ namespace Mars
         Application();
         virtual ~Application();
 
-        void Run();
+		void Run();
     };
 
 	Application* CreateApplication();
