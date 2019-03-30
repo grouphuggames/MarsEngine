@@ -187,6 +187,8 @@ namespace Mars
 			info.buffer.AudioBytes = chunk_size;
 			info.buffer.pAudioData = data;
 			info.buffer.Flags = XAUDIO2_END_OF_STREAM;
+
+			return S_OK;
 		}
 
 		IXAudio2* audio = nullptr;

@@ -13,7 +13,7 @@ namespace Mars
 
 		void Resize(s32 sz)
 		{
-			//if (sz <= capacity) return;
+			//if (sz <= capacity) return;		-- idk why this line is here and i'm not sure if it's important...if something breaks try to comment this out
 
 			T* new_arr = new T[sz];
 
@@ -28,6 +28,15 @@ namespace Mars
 	public:
 		MVector<T>() : capacity(10), size(0) { data = new T[capacity]; }
 		MVector<T>(s32 _size) : capacity(_size + 1), size(0) { data = new T[capacity]; }
+
+		MVector<T>(const MVector<T>& other) : size(other.size), capacity(other.capacity)		// vectors should be passed into functions by reference for modifying functions and const reference for non-modifying functions
+		{																						// this is for performance reasons, don't want to copy vectors around unneccessarily
+			data = new T[capacity];
+			for (s32 i = 0; i < size; ++i)
+			{
+				data[i] = other.data[i];
+			}
+		}
 
 		s32 Size() const { return size; }
 

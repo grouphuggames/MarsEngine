@@ -2,12 +2,32 @@
 #include <Mars/MMath.h>
 #include <Mars/MVector.h>
 #include <Mars/Audio.h>
+#include <string>
 
 
 class Game : public Mars::Application
 {
 public:
-	Game() {}
+	Game() 
+	{
+		Mars::MVector<s32> v;
+		v.PushBack(1);
+		v.PushBack(2);
+		v.PushBack(3);
+
+		Mars::MVector<s32> q = v;
+		q.Remove(1);
+
+		for (auto i : v)
+		{
+			OutputDebugStringA(std::to_string(i).c_str());
+		}
+
+		for (auto j : q)
+		{
+			OutputDebugStringA(std::to_string(j).c_str());
+		}
+	}
 	~Game() {}
 };
 
