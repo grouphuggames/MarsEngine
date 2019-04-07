@@ -3,6 +3,7 @@
 #include "vec4.h"
 #include "Debug.h"
 #include "Utils.h"
+#include "Renderer.h"
 
 
 namespace Mars
@@ -15,7 +16,8 @@ namespace Mars
 
     void Application::Run()
     {
-		MARS_CORE_INFO("Game Is Running!");
+		RenderInit();
+		GameStartup();
 
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
@@ -37,7 +39,7 @@ namespace Mars
 
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
-			// MARS_CORE_INFO(game_state.framerate);
+			ShowFPSCounter(false);
 		}
     }
 }

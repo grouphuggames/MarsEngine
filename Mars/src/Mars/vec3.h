@@ -13,7 +13,7 @@ namespace Mars
 	public:
 		__forceinline vec3() : data(_mm_set_ps1(0.f)) {}
 		__forceinline explicit vec3(f32 val) : data(_mm_set_ps(0.f, val, val, val)) {}
-		__forceinline explicit vec3(f32 _x, f32 _y, f32 _z) : data(_mm_set_ps(0, _z, _y, _x)) {}
+		__forceinline explicit vec3(f32 _x, f32 _y, f32 _z) : data(_mm_set_ps(0.f, _z, _y, _x)) {}
 
 		__forceinline friend vec3 operator+(vec3 a, vec3 b)
 		{

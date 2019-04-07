@@ -10,6 +10,7 @@ namespace Mars
         Application();
         virtual ~Application();
 
+		virtual void GameStartup() = 0;
 		void Run();
     };
 
