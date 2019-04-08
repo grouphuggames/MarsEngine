@@ -68,13 +68,14 @@ namespace Mars
 
 struct
 {
+public:
 	const char* window_title = "GameWindow";
 	s32 width = 800;
 	s32 height = 600;
 	f32 framerate = 0.f;
-	HWND hwnd = NULL;
 	bool running = true;
 	bool fullscreen = false;
+	HWND hwnd = NULL;
 } game_state;
 
 struct

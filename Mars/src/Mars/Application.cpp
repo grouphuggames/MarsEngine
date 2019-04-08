@@ -14,10 +14,12 @@ namespace Mars
     Application::~Application()
     {}
 
-    void Application::Run()
+    void Application::Run(HWND hwnd)
     {
-		RenderInit();
+		game_state.hwnd = hwnd;
+		InitDX11();
 		GameStartup();
+		InitScene();
 
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
@@ -37,9 +39,15 @@ namespace Mars
 				DispatchMessage(&msg);
 			}
 
+			// game time stuff goes here
+			UpdateRenderer();
+			Draw();
+
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
-			ShowFPSCounter(false);
+			ShowFPSCounter(true);
 		}
+
+		TerminateDX11();
     }
 }

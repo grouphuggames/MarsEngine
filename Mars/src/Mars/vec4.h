@@ -19,6 +19,13 @@ namespace Mars
 			return a;
 		}
 
+		__forceinline friend vec4 operator+=(vec4& a, vec4 b)
+		{
+			a = a + b;
+
+			return a;
+		}
+
 		__forceinline friend vec4 operator-(vec4 a, vec4 b)
 		{
 			a.data = _mm_sub_ps(a.data, b.data);
@@ -46,6 +53,13 @@ namespace Mars
 		{
 			__m128 tmp = _mm_set1_ps(b);
 			a.data = _mm_div_ps(a.data, tmp);
+
+			return a;
+		}
+
+		__forceinline friend vec4 operator/=(vec4& a, f32 b)
+		{
+			a = a / b;
 
 			return a;
 		}
