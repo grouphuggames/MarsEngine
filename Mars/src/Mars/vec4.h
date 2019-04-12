@@ -33,6 +33,13 @@ namespace Mars
 			return a;
 		}
 
+		__forceinline friend vec4 operator*(vec4 a, vec4 b)
+		{
+			a.data = _mm_mul_ps(a.data, b.data);
+
+			return a;
+		}
+
 		__forceinline friend vec4 operator*(vec4 a, f32 b)
 		{
 			__m128 tmp = _mm_set1_ps(b);
@@ -89,6 +96,22 @@ namespace Mars
 			return _mm_cvtss_f32(_mm_shuffle_ps(data, data, _MM_SHUFFLE(3, 3, 3, 3)));
 		}
 
+		__forceinline static f32 Dot(vec4 a, vec4 b)
+		{
+			return (a * b).Sum();
+		}
+
+		__forceinline f32 Length()
+		{
+			return sqrtf(Dot(*this, *this));
+		}
+
 		__m128 data;
+
+	private:
+		__forceinline f32 Sum()
+		{
+			return (this->x() + this->y() + this->z() + this->w());
+		}
 	};
 }

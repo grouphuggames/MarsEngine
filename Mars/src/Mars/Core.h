@@ -66,7 +66,8 @@ namespace Mars
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
 
 
-struct
+// adding MARS_API here fixed issue with having to add game_state.hwnd = hwnd to Application.cpp
+MARS_API struct
 {
 public:
 	const char* window_title = "GameWindow";

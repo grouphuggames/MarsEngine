@@ -43,7 +43,7 @@ namespace Mars
 		T* begin() { return &data[0]; }
 		T* end() { return &data[size]; }
 
-		T &MVector<T>::operator[](s32 index) { return data[index]; }
+		T& MVector<T>::operator[](s32 index) { return data[index]; }
 
 		bool Find(T t)
 		{

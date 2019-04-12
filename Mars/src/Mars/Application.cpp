@@ -16,10 +16,12 @@ namespace Mars
 
     void Application::Run(HWND hwnd)
     {
-		game_state.hwnd = hwnd;
+		// even though this is already set, it needs to be set again for some odd reason...has to do with MARS_API call
+		//game_state.hwnd = hwnd;
+
 		InitDX11();
 		GameStartup();
-		InitScene();
+		InitScene();		// for DX11 mode
 
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
@@ -40,12 +42,12 @@ namespace Mars
 			}
 
 			// game time stuff goes here
-			UpdateRenderer();
-			Draw();
+			UpdateRenderer();		// for DX11 mode
+			Draw();		// for DX11 mode
 
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
-			ShowFPSCounter(true);
+			ShowFPSCounter(false);
 		}
 
 		TerminateDX11();

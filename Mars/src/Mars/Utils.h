@@ -35,13 +35,13 @@ namespace Mars
 	{
 		info.timer_stop = std::chrono::high_resolution_clock::now();
 		if (info.time_scale == MARS_TIME::MARS_NANOSECOND)
-			info.time_delta = std::chrono::duration_cast<std::chrono::nanoseconds>(info.timer_stop - info.timer_start).count();
+			info.time_delta = (f32)std::chrono::duration_cast<std::chrono::nanoseconds>(info.timer_stop - info.timer_start).count();
 		else if (info.time_scale == MARS_TIME::MARS_MICROSECOND)
-			info.time_delta = std::chrono::duration_cast<std::chrono::microseconds>(info.timer_stop - info.timer_start).count();
+			info.time_delta = (f32)std::chrono::duration_cast<std::chrono::microseconds>(info.timer_stop - info.timer_start).count();
 		else if (info.time_scale == MARS_TIME::MARS_MILLISECOND)
-			info.time_delta = std::chrono::duration_cast<std::chrono::milliseconds>(info.timer_stop - info.timer_start).count();
+			info.time_delta = (f32)std::chrono::duration_cast<std::chrono::milliseconds>(info.timer_stop - info.timer_start).count();
 		else if (info.time_scale == MARS_TIME::MARS_SECOND)
-			info.time_delta = std::chrono::duration_cast<std::chrono::seconds>(info.timer_stop - info.timer_start).count();
+			info.time_delta = (f32)std::chrono::duration_cast<std::chrono::seconds>(info.timer_stop - info.timer_start).count();
 	}
 
 	__forceinline void ShowFPSCounter(bool active)

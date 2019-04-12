@@ -2,7 +2,7 @@
 #include <Mars/MMath.h>
 #include <Mars/MVector.h>
 #include <Mars/Audio.h>
-#include <string>
+#include <Mars/Debug.h>
 
 
 class Game : public Mars::Application

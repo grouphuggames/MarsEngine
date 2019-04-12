@@ -80,7 +80,7 @@ namespace Mars
 			return _mm_cvtss_f32(_mm_shuffle_ps(data, data, _MM_SHUFFLE(2, 2, 2, 2)));
 		}
 
-		__forceinline f32 Dot(vec3 a, vec3 b)
+		__forceinline static f32 Dot(vec3 a, vec3 b)
 		{
 			return (a * b).Sum();
 		}
@@ -90,9 +90,9 @@ namespace Mars
 			return sqrtf(Dot(*this, *this));
 		}
 
-		__forceinline vec3 Normalize()
+		__forceinline static vec3 Normalize(vec3 v)
 		{
-			return (*this * (1.f / this->Length()));
+			return (v * (1.f / v.Length()));
 		}
 
 		__forceinline static vec3 Cross(vec3 a, vec3 b)
