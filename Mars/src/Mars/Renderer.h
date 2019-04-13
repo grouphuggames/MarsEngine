@@ -58,6 +58,8 @@ namespace Mars
 	mat4 translation;
 	f32 rot = 0.01f;
 
+	f32 test = 4.f;
+
 	mat4 wvp;
 	mat4 world;
 	mat4 cam_view;
@@ -82,6 +84,7 @@ namespace Mars
 	void InitDX11()
 	{
 		HRESULT hr;
+		ADDHOT(test);
 
 		DXGI_MODE_DESC buffer_descriptor = {};
 		buffer_descriptor.Width = game_state.width;
@@ -291,7 +294,7 @@ namespace Mars
 		cube1world = mat4(1.f);
 		vec3 rot_axis(0.f, 1.f, 0.f);
 		rotation = mat4::Rotate(rot_axis, rot);
-		translation = mat4::Translate(vec3(0.f, 0.f, 4.f));
+		translation = mat4::Translate(vec3(0.f, 0.f, test));
 
 		cube1world = rotation * translation;
 	}
@@ -309,6 +312,7 @@ namespace Mars
 
 		dx11_data.device_context->DrawIndexed(36, 0, 0);
 		dx11_data.swap_chain->Present(0, 0);
+		MARS_CORE_INFO(test);
 	}
 
 	void TerminateDX11()

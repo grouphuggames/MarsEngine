@@ -30,5 +30,6 @@ void Fire()
 Mars::Application* Mars::CreateApplication()
 {
 	SetInput(MARS_MOUSE_BUTTON_LEFT, Fire);
+	SetInput(MARS_MOUSE_BUTTON_RIGHT, HotReload);
 	return new Game();
 }
