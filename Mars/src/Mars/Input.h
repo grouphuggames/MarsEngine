@@ -359,6 +359,11 @@ namespace Mars
 				MARS_CORE_ERROR("THAT FUNCTION HAS NOT YET BEEN SET!");
 			}
 			break;
+
+		case WM_CLOSE:
+			game_state.running = false;
+			PostQuitMessage(0);
+			break;
 		}
 
 		return DefWindowProc(hwnd, msg, wParam, lParam);

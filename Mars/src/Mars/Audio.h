@@ -26,12 +26,14 @@ namespace Mars
 				if (FAILED(hr))
 				{
 					MARS_CORE_ERROR("FAILED TO INIT AUDIO!");
+					return;
 				}
 
 				hr = audio->CreateMasteringVoice(&master_voice);
 				if (FAILED(hr))
 				{
 					MARS_CORE_ERROR("FAILED TO CREATE AUDIO MASTER VOICE!");
+					return;
 				}
 			}
 		}
@@ -48,18 +50,21 @@ namespace Mars
 			if (FAILED(hr))
 			{
 				MARS_CORE_ERROR("FAILED TO CREATE SOURCE VOICE");
+				return;
 			}
 
 			hr = source_voice->SubmitSourceBuffer(&info.buffer);
 			if (FAILED(hr))
 			{
 				MARS_CORE_ERROR("FAILED TO SUBMIT SOURCE BUFFER");
+				return;
 			}
 
 			hr = source_voice->Start(0);
 			if (FAILED(hr))
 			{
 				MARS_CORE_ERROR("FAILED TO START AUDIO PLAYBACK");
+				return;
 			}
 		}
 

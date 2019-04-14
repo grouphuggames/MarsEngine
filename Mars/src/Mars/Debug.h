@@ -5,6 +5,7 @@
 #include "MVector.h"
 #include "vec3.h"
 #include "Core.h"
+#include "Utils.h"
 
 
 namespace Mars
@@ -35,7 +36,7 @@ namespace Mars
 	static void AddHot(u32 name_hash, bool* var_ptr) { hot_reload_vars.bools.PushBack(std::make_tuple(name_hash, var_ptr)); }
 	static void AddHot(u32 name_hash, vec3* var_ptr) { hot_reload_vars.vec3s.PushBack(std::make_tuple(name_hash, var_ptr)); }
 
-	u32 string_hash(const char* data, u32 data_length, const char* salt, u32 salt_length)
+	u32 string_hash(const char* data, size_t data_length, const char* salt, u32 salt_length)
 	{
 		u32 hash = 0;
 		unsigned char* hash_ptr = reinterpret_cast<unsigned char*>(&hash);
@@ -51,9 +52,6 @@ namespace Mars
 
 #define ADDHOT(VAR)	AddHot(string_hash(#VAR, strlen(#VAR), SALT, SIZE_OF_SALT), &(VAR))
 
-	// for some reason, vectors (MVector AND std::vector) are getting emptied before they can be processed when this function is called...
-	// for right now all hot reloading is broken...
-	// dllimport/dllexport might be the key to fixing it... similar things were happening to hwnd from Core.h and now that stuff is fixed
 	void HotReload()
 	{
 		std::ifstream file("..\\..\\Mars\\res\\HotReload.txt");
@@ -86,7 +84,7 @@ namespace Mars
 				{
 					if (std::get<0>(d) == name_hash)
 					{
-						float vals[] = { 0.f, 0.f, 0.f };
+						f32 vals[] = { 0.f, 0.f, 0.f };
 						for (u8 i = 0; i < 3; i++)
 						{
 							size_t new_space = value.find(' ');

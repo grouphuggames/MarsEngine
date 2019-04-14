@@ -1,1 +1,1 @@
-test -5
+cube_position -2 4 0

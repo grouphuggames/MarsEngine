@@ -79,7 +79,11 @@ namespace Mars
 			Resize(size - 1);
 		}
 
-		~MVector() { delete[] data; }
+		~MVector()
+		{
+			delete[] data;
+			data = nullptr;
+		}
 
 	};
 }

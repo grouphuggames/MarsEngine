@@ -37,14 +37,15 @@ namespace Mars
 		RegisterClassEx(&wc);
 
 		game_state.hwnd = CreateWindowEx(NULL, window_name, game_state.window_title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, game_state.width, game_state.height, NULL, NULL, hInstance, NULL);
-
 		if (!game_state.hwnd)
 		{
 			MARS_CORE_ERROR("Error Creating WIN32 Window!!");
 		}
 
 		if (game_state.fullscreen)
+		{
 			SetWindowLong(game_state.hwnd, GWL_STYLE, 0);
+		}
 
 		ShowCursor(false);
 		ShowWindow(game_state.hwnd, nShowCmd);

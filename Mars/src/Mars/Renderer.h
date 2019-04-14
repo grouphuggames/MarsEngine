@@ -4,7 +4,6 @@
 #include <d3d12.h>
 #include <d3d11_4.h>
 #include <d3dcompiler.h>
-#include <DirectXMath.h>		// just here for debugging math library
 #include "vec3.h"
 #include "vec4.h"
 #include "mat4.h"
@@ -33,7 +32,7 @@ namespace Mars
 		ID3D11InputLayout* vert_layout = nullptr;
 
 		// we'll find out where to put this stuff later
-		ID3D11Buffer* cb_per_object_buffer;
+		ID3D11Buffer* cb_per_object_buffer = nullptr;
 	} dx11_data;
 
 	struct Vertex
@@ -58,7 +57,7 @@ namespace Mars
 	mat4 translation;
 	f32 rot = 0.01f;
 
-	f32 test = 4.f;
+	vec3 cube_position(0.f, 0.f, 4.f);
 
 	mat4 wvp;
 	mat4 world;
@@ -84,7 +83,7 @@ namespace Mars
 	void InitDX11()
 	{
 		HRESULT hr;
-		ADDHOT(test);
+		ADDHOT(cube_position);
 
 		DXGI_MODE_DESC buffer_descriptor = {};
 		buffer_descriptor.Width = game_state.width;
@@ -259,21 +258,13 @@ namespace Mars
 		cam_up = vec3(0.f, 1.f, 0.f);
 
 		cam_view = mat4::LookAtLH(cam_position, cam_target, cam_up);
-		cam_projection = mat4::PerspectiveFovLH(0.4f * 3.14f, (float)game_state.width / game_state.height, 1.f, 1000.f);
+		cam_projection = mat4::PerspectiveFovLH(0.4f * PI, (f32)game_state.width / game_state.height, 1.f, 1000.f);
 		world = mat4(1.f);
 		wvp = world * cam_view * cam_projection;
 
 		cb_per_obj.wvp = mat4::Transpose(wvp);
 		dx11_data.device_context->UpdateSubresource(dx11_data.cb_per_object_buffer, 0, nullptr, &cb_per_obj, 0, 0);
 		dx11_data.device_context->VSSetConstantBuffers(0, 1, &dx11_data.cb_per_object_buffer);
-
-		DirectX::XMVECTOR camera_position = DirectX::XMVectorSet(0.f, 0.f, -0.5f, 0.f);
-		DirectX::XMVECTOR camera_target = DirectX::XMVectorSet(0.f, 0.f, 0.f, 0.f);
-		DirectX::XMVECTOR camera_up_direction = DirectX::XMVectorSet(0.f, 1.f, 0.5f, 0.f);
-		DirectX::XMMATRIX camera_viewpoint = DirectX::XMMatrixLookAtLH(camera_position, camera_target, camera_up_direction);
-		DirectX::XMMATRIX camera_projection = DirectX::XMMatrixPerspectiveFovLH(0.4f * 3.14f, (float)game_state.width / game_state.height, 1.f, 1000.f);
-		DirectX::XMMATRIX world_matrix = DirectX::XMMatrixIdentity();
-		DirectX::XMMATRIX wvp_matrix = world_matrix * camera_viewpoint * camera_projection;
 
 		D3D11_VIEWPORT viewport = {};
 		viewport.Width = (f32)game_state.width;
@@ -294,14 +285,14 @@ namespace Mars
 		cube1world = mat4(1.f);
 		vec3 rot_axis(0.f, 1.f, 0.f);
 		rotation = mat4::Rotate(rot_axis, rot);
-		translation = mat4::Translate(vec3(0.f, 0.f, test));
+		translation = mat4::Translate(cube_position);
 
 		cube1world = rotation * translation;
 	}
 
 	void Draw()
 	{
-		float bg_color[4] = { 0.f, 0.f, 0.f, 1.f };
+		f32 bg_color[4] = { 0.f, 0.f, 0.f, 1.f };
 		dx11_data.device_context->ClearRenderTargetView(dx11_data.render_target_view, bg_color);
 		dx11_data.device_context->ClearDepthStencilView(dx11_data.depth_stencil_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
@@ -312,7 +303,6 @@ namespace Mars
 
 		dx11_data.device_context->DrawIndexed(36, 0, 0);
 		dx11_data.swap_chain->Present(0, 0);
-		MARS_CORE_INFO(test);
 	}
 
 	void TerminateDX11()
