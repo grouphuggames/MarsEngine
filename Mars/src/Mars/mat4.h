@@ -13,10 +13,10 @@ namespace Mars
 
 		__forceinline explicit mat4(f32 val)
 		{
-			__m128 a = _mm_set_ps(0.f, 0.f, 0.f, 1.f);
-			__m128 b = _mm_set_ps(0.f, 0.f, 1.f, 0.f);
-			__m128 c = _mm_set_ps(0.f, 1.f, 0.f, 0.f);
-			__m128 d = _mm_set_ps(1.f, 0.f, 0.f, 0.f);
+			__m128 a = _mm_set_ps(0.f, 0.f, 0.f, val);
+			__m128 b = _mm_set_ps(0.f, 0.f, val , 0.f);
+			__m128 c = _mm_set_ps(0.f, val, 0.f, 0.f);
+			__m128 d = _mm_set_ps(val, 0.f, 0.f, 0.f);
 
 			data[0] = a;
 			data[1] = b;
