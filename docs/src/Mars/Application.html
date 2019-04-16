@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Application</title>
+    </head>
+
+    <body>
+        <h1>Application</h1>
+        <p>
+            The Application class houses the main loop of the program and is also in charge of system startup/shutdown.
+        </p>
+
+        <h2>Functions</h2>
+
+        <p>
+        <strong>void GameStartup()</strong>
+        </p>
+
+        <p>
+            This is a virtual function meant to be implemented by the game. Use this function to set game specific data (ie. entity data, game rules) for startup. Returns void.
+        </p>
+
+        <p>
+        <strong>Application* CreateApplication()</strong>
+        </p>
+
+        <p>
+            To be implemented by the game. Use this to set input bindings for the game using SetInput. Also use this to set system-wide globals such as height and width of the game window. Returns pointer to new Application.
+        </p>
+    </body>
+</html>

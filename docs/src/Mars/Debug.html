@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Debug</title>
+    </head>
+
+    <body>
+        <h1>Debug</h1>
+        <p>
+            Defines information for creating debug console and logic for the hot reload system.
+        </p>
+
+        <h2>Functions</h2>
+        <p>
+            <strong>void CreateWin32DebugConsole()</strong>
+        </p>
+        <p>
+            Creates a console to put debug messages into. Returns void.
+        </p>
+
+        <p>
+            <strong>u32 string_hash(const char* data, size_t data_length, const char* salt, u32 salt_length)</strong>
+        </p>
+        <p>
+            Takes string and hashes it into an unsigned 32 bit integer. Used to create keys for HRVars data structure. Returns data as a (hopefully) unique u32.
+        </p>
+
+        <p>
+            <strong>static void AddHot(u32 name_hash, s32* var_ptr)</strong>
+        </p>
+        <p>
+            Adds signed integer to list of variables for hot reloading (hot_reload_vars.ints). Returns void.
+        </p>
+
+        <p>
+            <strong>static void AddHot(u32 name_hash, f32* var_ptr)</strong>
+        </p>
+        <p>
+            Adds float to list of variables for hot reloading (hot_reload_vars.floats). Returns void.
+        </p>
+
+        <p>
+            <strong>static void AddHot(u32 name_hash, bool* var_ptr)</strong>
+        </p>
+        <p>
+            Adds bool to list of variables for hot reloading (hot_reload_vars.bools). Returns void.
+        </p>
+
+        <p>
+            <strong>static void AddHot(u32 name_hash, vec3* var_ptr)</strong>
+        </p>
+        <p>
+            Adds vec3 to list of variables for hot reloading (hot_reload_vars.vec3s). Returns void.
+        </p>
+
+        <p>
+            <strong>void HotReload()</strong>
+        </p>
+        <p>
+            Changes the values of all variables in hot_reload_vars from values in memory to values specified in HotReload.txt. Returns void.
+        </p>
+
+        <h2>Data</h2>
+        <p>
+            <strong>HRVars</strong>
+        </p>
+        <p>
+            MVector&lt;std::tuple&lt;u32, s32*&gt;&gt; ints;
+            <br>MVector&lt;std::tuple&lt;u32, f32*&gt;&gt; floats;
+            <br>MVector&lt;std::tuple&lt;u32, bool*&gt;&gt; bools;
+            <br>MVector&lt;std::tuple&lt;u32, vec3*&gt;&gt; vec3s;
+        </p>
+
+        <h2>Other</h2>
+        <p>
+            <strong>Defines</strong>
+        </p>
+        <p>
+            SALT - Salt to be used by string_hash. Default value is "MARS".
+            <br>SIZE_OF_SALT - Must be equal to the number of characters in SALT including the null terminating character. Default value is 5.
+        </p>
+
+        <p>
+            <strong>Macros</strong>
+        </p>
+        <p>
+            ADDHOT(var) - calls AddHot function according to the data type of var.
+        </p>
+    </body>
+</html>

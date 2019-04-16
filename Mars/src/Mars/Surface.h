@@ -5,7 +5,7 @@
 
 namespace Mars
 {
-	void CreateWin32Surface(HINSTANCE hInstance, int nShowCmd)
+	void CreateWin32Surface(HINSTANCE hInstance, s32 nShowCmd)
 	{
 		// create win32 window
 		LPCTSTR window_name = "MarsEngineWindow";

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Utils</title>
+    </head>
+
+    <body>
+        <h1>Utils</h1>
+        <p>
+            Misc extra utilies such as a timer
+        </p>
+
+        <h2>Functions</h2>
+        <p>
+            <strong>void StartTimer(TimerInfo& info)</strong>
+        </p>
+        <p>
+            Starts a timer using info struct provided as input parameter. Sets info.timer_start to the time this function is called. info.time_scale must be set before calling this function.
+        </p>
+
+        <p>
+            <strong>void StopTimer(TimerInfo& info)</strong>
+        </p>
+        <p>
+            Stops the timer using info struct provided as input parameter. Sets info.timer_stop to the time this function is called and sets info.time_delta to the elapsed time since StartTimer was called.
+        </p>
+
+        <p>
+            <strong>void ShowFPSCounter(bool active)</strong>
+        </p>
+        <p>
+            Sets whether or not the game's framerate should be shown in the debug console. Should be placed in a loop to see it constantly updating.
+        </p>
+
+        <h2>Data</h2>
+        <p>
+            <strong>TimerInfo</strong>
+        </p>
+        <p>
+            MARS_TIME time_scale
+            <br>std::chrono::time_point&lt;std::chrono::steady_clock&gt; timer_start
+            <br>std::chrono::time_point&lt;std::chrono::steady_clock&gt; timer_stop
+            <br>f32 time_delta
+        </p>
+
+        <h2>Other</h2>
+        <p>
+            <strong>Aliases</strong>
+        </p>
+        <p>
+            MARS_NANOSECOND = std::chrono::nanoseconds
+            <br>MARS_MICROSECOND = std::chrono::microseconds
+            <br>MARS_MILLISECOND = std::chrono::milliseconds
+            <br>MARS_SECOND = std::chrono::seconds
+        </p>
+
+        <p>
+            <strong>Enums</strong>
+        </p>
+        <p>
+            MARS_TIME - used to set the resolution for the timer in the TimerInfo struct
+        </p>
+    </body>
+</html>

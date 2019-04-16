@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Input</title>
+    </head>
+
+    <body>
+        <h1>Input</h1>
+        <p>
+            Defines logic necessary for handling user input.
+        </p>
+
+        <h2>Functions</h2>
+        <p>
+            <strong>void SetInput(MARS_KEY input, InputFunc func)</strong>
+        </p>
+        <p>
+            Binds func to the keyoard button specified by input. Returns void.
+        </p>
+
+        <p>
+            <strong>void SetInput(MARS_MOUSE input, InputFunc func)</strong>
+        </p>
+        <p>
+            Binds func to the mouse button specified by input. Returns void.
+        </p>
+
+        <p>
+            <strong>LRESULT CALLBACK ProcessInput(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)</strong>
+        </p>
+        <p>
+            Handles all of the keyboard and mouse button inputs. If red 'X' or ESC key are triggered, the application will close. If binding has not been set by SetInput, an error message will be put out to the debug console. Returns LRESULT.
+        </p>
+
+        <h2>Data</h2>
+        <p>
+            std::unordered_map&lt;s32, InputFunc&gt; InputFuncs - This map uses MARS_KEY and MARS_MOUSE as its key value with the function pointer as the value. Used to store input bindings.
+        </p>
+
+        <h2>Other</h2>
+        <p>
+            <strong>Aliases</strong>
+        </p>
+        <p>
+            InputFunc = void(*)(void) - alias for function pointer
+        </p>
+
+        <p>
+            <strong>Enums</strong>
+        </p>
+        <p>
+            MARS_KEY - renames win32 virtual key codes for the keyboard to be more uniformly readable
+            <br>MARS_MOUSE - renames win32 virtual key codes for the mouse to be more uniformly readable
+        </p>
+
+    </body>
+</html>

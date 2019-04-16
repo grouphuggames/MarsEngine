@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>vec4</title>
+    </head>
+
+    <body>
+        <h1>vec4</h1>
+        <p>
+            Class designed to handle operations involving 4-dimensional vectors. Uses SSE2 for vectorization.
+        </p>
+
+        <h2>Constructors</h2>
+        <p>
+            vec4() - sets all elements of the vector to 0
+            <br>vec4(f32 val) - set all elements of the vector to val
+            <br>vec4(f32 _x, f32 _y, f32 _z, f32 _w)
+        </p>
+
+        <h2>Functions</h2>
+        <p>
+            <strong>f32 x()</strong>
+        </p>
+        <p>
+            Returns the x value of the vector.
+        </p>
+
+        <p>
+            <strong>f32 y()</strong>
+        </p>
+        <p>
+            Returns the y value of the vector.
+        </p>
+
+        <p>
+            <strong>f32 z()</strong>
+        </p>
+        <p>
+            Returns the z value of the vector.
+        </p>
+
+        <p>
+            <strong>f32 w()</strong>
+        </p>
+        <p>
+            Returns the w value of the vector.
+        </p>
+
+        <p>
+            <strong>f32 Dot(vec4 a, vec4 b)</strong>
+        </p>
+        <p>
+            Returns inner product of a and b.
+        </p>
+
+        <p>
+            <strong>f32 Length()</strong>
+        </p>
+        <p>
+            Returns the magnitude of the vector as a f32.
+        </p>
+
+        <p>
+            <strong>f32 Sum()</strong>
+        </p>
+        <p>
+            Returns the sum of all of the elements of the vector.
+        </p>
+
+        <h2>Operators</h2>
+        <p>
+            <strong>vec4 operator+(vec4 a, vec4 b)</strong>
+        </p>
+        <p>
+            Adds the elements of a and b and returns the result.
+        </p>
+
+        <p>
+            <strong>vec4 operator+=(vec4& a, vec4 b)</strong>
+        </p>
+        <p>
+            Adds the elements of a and b and stores the result in a.
+        </p>
+
+        <p>
+            <strong>vec4 operator-(vec4 a, vec4 b)</strong>
+        </p>
+        <p>
+            Subtracts the elements of a and b and returns the result.
+        </p>
+
+        <p>
+            <strong>vec4 operator*(vec4 a, vec4 b)</strong>
+        </p>
+        <p>
+            Multiplies the elements of a and b and returns the result.
+        </p>
+
+        <p>
+            <strong>vec4 operator*(vec4 a, f32 b)</strong>
+        </p>
+        <p>
+            Multiplies the elements of a with f32 b and returns the result.
+        </p>
+
+        <p>
+            <strong>vec4 operator*(f32 a, vec4 b)</strong>
+        </p>
+        <p>
+            Multiplies the elements of b with f32 a and returns the result.
+        </p>
+
+        <p>
+            <strong>vec4 operator/(vec4 a, f32 b)</strong>
+        </p>
+        <p>
+            Divides the elements of a by f32 b and returns the result.
+        </p>
+
+        <p>
+            <strong>vec4 operator/=(vec4& a, f32 b)</strong>
+        </p>
+        <p>
+            Divides the elements of a by f32 b and stores the result in a.
+        </p>
+
+        <p>
+            <strong>std::ostream& operator&lt;&lt;(std::ostream& os, vec4 a)</strong>
+        </p>
+        <p>
+            Gives the ability to print this class out using std::cout or any of the macros set by Core.h
+        </p>
+
+        <h2>Data</h2>
+        <p>
+            __m128 data - SSE2 data type with a size of 16 bytes used for SIMD.
+        </p>
+    </body>
+</html>

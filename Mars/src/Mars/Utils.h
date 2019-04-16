@@ -13,6 +13,7 @@ namespace Mars
 		MARS_SECOND
 	};
 
+	// it doesn't even look like these are being used... maybe take a look at this to see if they are necessary
 	using MARS_NANOSECOND = std::chrono::nanoseconds;
 	using MARS_MICROSECOND = std::chrono::microseconds;
 	using MARS_MILLISECOND = std::chrono::milliseconds;

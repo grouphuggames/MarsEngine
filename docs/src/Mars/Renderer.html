@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Renderer</title>
+    </head>
+
+    <body>
+        <h1>Renderer</h1>
+        <p>
+            Houses all of the logic for initializing DX11 & DX12. Also contains all of the logic necessary for putting images onto the drawing surface.
+        </p>
+
+        <h2>Functions</h2>
+        <p>
+            <strong>void InitDX12()</strong>
+        </p>
+        <p>
+            Has not been implemented yet...
+        </p>
+
+        <p>
+            <strong>void InitDX11()</strong>
+        </p>
+        <p>
+            Initializes data needed to start up a DX11 instance. Returns void.
+        </p>
+
+        <p>
+            <strong>void InitScene</strong>
+        </p>
+        <p>
+            Gets scene ready to draw graphics onto the screen. Sets up important information not necessary for initialization of the renderer. Returns void.
+        </p>
+
+        <p>
+            <strong>void UpdateRenderer()</strong>
+        </p>
+        <p>
+            Update loop for the renderer. Getting the world prepped before each draw call. Returns void.
+        </p>
+
+        <p>
+            <strong>void Draw()</strong>
+        </p>
+        <p>
+            Draw call for the renderer. Sets background color, sends new data to the GPU, draws index data, and swaps the buffers in the swap_chain. Returns void.
+        </p>
+
+        <p>
+            <strong>void TerminateDX11()</strong>
+        </p>
+        <p>
+            Frees all of the memory allocated by DX11 objects during the process of running the application. Returns void.
+        </p>
+
+        <h2>Data</h2>
+        <p>
+            D3D11_INPUT_ELEMENT_DESC layout[]
+            <br>mat4 cube1world
+            <br>mat4 rotation
+            <br>mat4 scale
+            <br>mat4 translation
+            <br>f32 rot
+            <br>vec3 cube_position
+            <br>mat4 wvp
+            <br>mat4 world
+            <br>mat4 cam_view
+            <br>mat4 cam_projection
+            <br>vec3 cam_position
+            <br>vec3 cam_target
+            <br>vec3 cam_up
+            <br> cbPerObject cb_per_object
+        </p>
+
+        <p>
+            <strong>dx11_data</strong>
+        </p>
+        <p>
+            IDXGISwapChain* swap_chain
+            <br>ID3D11Device* ID3D11Device
+            <br>ID3D11DeviceContext* device_context
+            <br>ID3D11RenderTargetView* render_target_view
+            <br>ID3D11DepthStencilView* depth_stencil_view
+            <br>ID3D11Texture2D* depth_stencil_buffer
+            <br>ID3D11Buffer* vert_buffer
+            <br>ID3D11Buffer* index_buffer
+            <br>ID3D11VertexShader* vs
+            <br>ID3D11PixelShader* ps
+            <br>ID3D10Blob* vs_buffer
+            <br>ID3D10Blob* ps_buffer
+            <br>ID3D10Blob* error_message
+            <br>ID3D11InputLayout* vert_layout
+            <br>ID3D11Buffer* cb_per_object_buffer
+        </p>
+
+        <p>
+            <strong>Vertex</strong>
+        </p>
+        <p>
+            Vertex() - set all values to 0
+            <br>Vertex(f32 x, f32 y, f32 z, f32 r, f32 g, f32 b, f32 a) - set position to {x, y, z} and color to {r, g, b, a}
+
+            <br>vec3 position
+            <br>vec4 color
+        </p>
+
+        <p>
+            <strong>cbPerObject</strong>
+        </p>
+        <p>
+            mat4 wvp
+        </p>
+    </body>
+</html>

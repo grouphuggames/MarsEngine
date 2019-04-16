@@ -15,8 +15,7 @@ s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Mars::CreateWin32DebugConsole();
 	Mars::CreateWin32Surface(hInstance, nShowCmd);
 
-	HWND tmp_hwnd = game_state.hwnd;
-	game->Run(tmp_hwnd);
+	game->Run();
 
 	delete game;
 	return 0;

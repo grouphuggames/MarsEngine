@@ -75,10 +75,7 @@ namespace Mars
 
 	cbPerObject cb_per_obj;
 
-	void InitDX12()
-	{
-		
-	}
+	void InitDX12();
 
 	void InitDX11()
 	{

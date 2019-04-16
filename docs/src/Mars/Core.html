@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Core</title>
+    </head>
+
+    <body>
+        <h1>Core</h1>
+        <p>
+            This defines the core of the engine and contains both the engine level and game level debugging messages as well as global data to be accessed by all other areas of the engine or game.
+        </p>
+
+        <h2>Functions</h2>
+        <p>
+            <strong>void PrintToLog(T&&... t)</strong>
+        </p>
+        <p>
+            Takes any data type with an ostream operator overload and prints it out to the debug console. Can be any number of mismatched data types. Returns void.
+        </p>
+
+        <h2>Data</h2>
+        <p>
+            <strong>game_state</strong>
+        </p>
+        <p>
+            const char* window_title
+            <br>s32 width
+            <br>s32 height
+            <br>f32 framerate
+            <br>bool running
+            <br>bool fullscreen
+            <br>HWND hwnd
+        </p>
+
+        <p>
+            <strong>system_info</strong>
+        </p>
+        <p>
+            s32 core_count
+        </p>
+
+        <h2>Other</h2>
+        <p>
+            <strong>Aliases</strong>
+        </p>
+        <p>
+            u8 = uint8_t
+            <br>s32 = int32_t
+            <br>u32 = uint32_t
+            <br>s64 = int64_t
+            <br>u64 = uint64_t
+            <br>f32 = float
+        </p>
+
+        <p>
+            <strong>Defines</strong>
+        </p>
+        <p>
+            MARS_API - defines dllexport in engine and dllimport in game
+        </p>
+
+        <p>
+            <strong>Macros</strong>
+        </p>
+        <p>
+            MARS_CORE_INFO(...) - prints out debug info to debug console in green font from the engine
+            <br>MARS_CORE_INFO_EXTRA(...) - prints out debug info to debug console in green font from the engine with file and line number attached
+            <br>MARS_CORE_WARN(...) - prints out warning message to debug console in blue font from the engine with file and line number attached
+            <br>MARS_CORE_ERROR(...) - prints out error message to debug console in red font from the engine with file and line number attached
+            <br>MARS_INFO(...) - prints out debug info to debug console in green font from the game
+            <br>MARS_INFO_EXTRA(...) - prints out debug info to debug console in green font from the game with file and line number attached
+            <br>MARS_WARN(...) - prints out warning message to debug console in blue font from the game with file and line number attached
+            <br>MARS_ERROR(...) - prints out error message to debug console in red font from the game with file and line number attached
+        </p>
+
+    </body>
+</html>

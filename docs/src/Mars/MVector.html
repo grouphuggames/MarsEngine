@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MVector</title>
+    </head>
+
+    <body>
+        <h1>MVector</h1>
+        <p>
+            C++ style vector for the Mars Engine.
+        </p>
+
+        <h2>Constructors</h2>
+        <p>
+            MVector&lt;T&gt;() - allocates enough space for 10 items to be entered into vector
+            <br>MVector&lt;T&gt;(s32 _size) - allocates enough space for _size + 1 items to be entered into vector
+            <br>MVector&lt;T&gt;(const MVector&lt;T&gt;& other) - copy constructor
+        </p>
+
+        <h2>Destructors</h2>
+        <p>
+            ~MVector() - cleans up memory left behind by vector.
+        </p>
+
+        <h2>Functions</h2>
+        <p>
+            <strong>void Resize(s32 sz)</strong>
+        </p>
+        <p>
+            Sets the new size for the vector. Returns void.
+        </p>
+
+        <p>
+            <strong>s32 Size() const</strong>
+        </p>
+        <p>
+            Returns the number of elements in the vector.
+        </p>
+
+        <p>
+            <strong>T* begin()</strong>
+        </p>
+        <p>
+            Returns a pointer to the first element in the vector. Necessary for using range-for.
+        </p>
+
+        <p>
+            <strong>T* end()</strong>
+        </p>
+        <p>
+            Returns a pointer to the last element in the vector. Necessary for using range-for.
+        </p>
+
+        <p>
+            <strong>bool Find(T t)</strong>
+        </p>
+        <p>
+            Returns true if t is an element in the vector. Returns false if not.
+        </p>
+
+        <p>
+            <strong>s32 FindIndex(T t)</strong>
+        </p>
+        <p>
+            Returns index of t in the vector. If element does not exist in vector, -1 is returned.
+        </p>
+
+        <p>
+            <strong>void PushBack(T val)</strong>
+        </p>
+        <p>
+            Adds val to the end of the vector.
+        </p>
+
+        <p>
+            <strong>void Remove(s32 index)</strong>
+        </p>
+        <p>
+            Removes the value held in the vector with the index provided by function parameter.
+        </p>
+
+        <h2>Operators</h2>
+        <p>
+            <strong>T& MVector&lt;T&gt;::operator[](s32 index)</strong>
+        </p>
+        <p>
+            Allows use of [] operator to treat vector as a C-style array.
+        </p>
+
+        <h2>Data</h2>
+        <p>
+            T* data - array holding the data of the vector
+            <br>s32 capacity - the temporary maximum capacity of the vector
+            <br>s32 size - the number of elements in the vector
+        </p>
+    </body>
+</html>

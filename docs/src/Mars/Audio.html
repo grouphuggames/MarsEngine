@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Audio</title>
+    </head>
+
+    <body>
+        <h1>Audio</h1>
+        <p>
+            The audio engine for the Mars Engine powered by the XAudio2 library. Currently only capable of playing 2D audio files so no 3D audio effects or editing options such as reverb, pitch, looping, etc.
+        </p>
+
+        <h2>Functions</h2>
+
+        <p>
+            <strong>void Init()</strong>
+        </p>
+        <p>
+            This currently gets called only directly before playing an audio file. This could probably be called only once in system startup, however not much testing has been done with the audio engine. Returns void.
+        </p>
+
+        <p>
+        <strong>void PlayAudio(char* file_name)</strong>
+        </p>
+
+        <p>
+            This is going to play an audio file with no options for looping, pausing, stopping. Currently only tested with .wav files... Returns void.
+        </p>
+
+        <h2>Data</h2>
+    </body>
+</html>

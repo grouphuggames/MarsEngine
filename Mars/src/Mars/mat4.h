@@ -51,7 +51,7 @@ namespace Mars
 			return mat4(a, b, c, d);
 		}
 
-		static mat4 Transpose(mat4 matrix)		// this is slow as dick, simdize this later to make this way faster...
+		static mat4 Transpose(mat4 matrix)		// this is slow, simdize this later to make this way faster...
 		{
 			mat4 result;
 

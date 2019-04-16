@@ -14,11 +14,8 @@ namespace Mars
     Application::~Application()
     {}
 
-    void Application::Run(HWND hwnd)
+    void Application::Run()
     {
-		// even though this is already set, it needs to be set again for some odd reason...has to do with MARS_API call
-		//game_state.hwnd = hwnd;
-
 		InitDX11();
 		GameStartup();
 		InitScene();		// for DX11 mode

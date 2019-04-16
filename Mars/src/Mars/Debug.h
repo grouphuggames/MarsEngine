@@ -18,15 +18,19 @@ namespace Mars
 		freopen("CONOUT$", "w", stdout);
 	}
 
+// these no longer need to be global since the creation of the ADDHOT macro...these can be moved to another part of the file, maybe as private members of HRVars
 #define SALT "MARS"
 #define SIZE_OF_SALT 5
 
+	// map might be a better data structure to use instead of vector of tuples...
+	// or tuples could be replaced by structs
 	struct HRVars
 	{
 		MVector<std::tuple<u32, s32*>> ints;
 		MVector<std::tuple<u32, f32*>> floats;
 		MVector<std::tuple<u32, bool*>> bools;
 		MVector<std::tuple<u32, vec3*>> vec3s;
+		// look into making it possible for programmer to add custom data types from the game into this list...
 	};
 
 	MARS_API HRVars hot_reload_vars;

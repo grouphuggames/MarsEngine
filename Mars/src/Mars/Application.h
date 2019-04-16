@@ -11,7 +11,7 @@ namespace Mars
         virtual ~Application();
 
 		virtual void GameStartup() = 0;
-		void Run(HWND hwnd);
+		void Run();
     };
 
 	Application* CreateApplication();
