@@ -16,9 +16,10 @@ namespace Mars
 
     void Application::Run()
     {
-		InitDX11();
 		GameStartup();
-		InitScene();		// for DX11 mode
+		InitDX12();
+		InitDX12Scene();
+		dx12_data.command_list->Close();
 
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
@@ -39,14 +40,13 @@ namespace Mars
 			}
 
 			// game time stuff goes here
-			UpdateRenderer();		// for DX11 mode
-			Draw();		// for DX11 mode
+			UpdateDX12Renderer();
+			DX12Draw();
 
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
-			ShowFPSCounter(false);
 		}
 
-		TerminateDX11();
+		TerminateDX12();
     }
 }

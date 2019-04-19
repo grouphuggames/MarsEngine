@@ -4,6 +4,7 @@
 #include <d3d12.h>
 #include <d3d11_4.h>
 #include <d3dcompiler.h>
+#include "d3dx12.h"
 #include "vec3.h"
 #include "vec4.h"
 #include "mat4.h"
@@ -34,6 +35,42 @@ namespace Mars
 		// we'll find out where to put this stuff later
 		ID3D11Buffer* cb_per_object_buffer = nullptr;
 	} dx11_data;
+
+	// required for dx12 initialization
+	constexpr u32 frame_count = 2;
+
+	struct
+	{
+		u32 frame_index;
+		CD3DX12_VIEWPORT viewport;
+		CD3DX12_RECT scissor_rect;
+		u32 rtv_descriptor_size;
+		ID3D12Device5* rt_device = nullptr;
+		ID3D12CommandQueue* command_queue = nullptr;
+		IDXGISwapChain3* swap_chain = nullptr;
+		ID3D12DescriptorHeap* rtv_heap = nullptr;
+		ID3D12Resource* render_targets[frame_count];
+		ID3D12CommandAllocator* command_allocator = nullptr;
+		ID3D12RootSignature* root_signature = nullptr;
+		ID3D12PipelineState* pipeline_state = nullptr;
+		ID3D12GraphicsCommandList* command_list = nullptr;
+		ID3D12Resource* vertex_buffer = nullptr;
+		D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view;
+		ID3D12Fence* fence = nullptr;
+		u64 fence_value;
+		HANDLE fence_event;
+	} dx12_data;
+
+	struct AccelerationStructureBuffers
+	{
+		ID3D12Resource* scratch;
+		ID3D12Resource* result;
+		ID3D12Resource* instance_desc;
+	};
+
+	ID3D12Resource* blas;
+	AccelerationStructureBuffers tlas_buffers;
+	MVector<std::pair<ID3D12Resource*, mat4>> instances;
 
 	struct Vertex
 	{
@@ -75,7 +112,367 @@ namespace Mars
 
 	cbPerObject cb_per_obj;
 
-	void InitDX12();
+	void WaitForPreviousFrame()
+	{
+		HRESULT hr;
+		const u64 fence = dx12_data.fence_value;
+
+		hr = dx12_data.command_queue->Signal(dx12_data.fence, fence);
+		dx12_data.fence_value++;
+
+		if (dx12_data.fence->GetCompletedValue() < fence)
+		{
+			hr = dx12_data.fence->SetEventOnCompletion(fence, dx12_data.fence_event);
+			if (FAILED(hr))
+			{
+				MARS_CORE_ERROR("Failed to set dx12 fence event...");
+				return;
+			}
+
+			WaitForSingleObject(dx12_data.fence_event, INFINITE);
+		}
+
+		dx12_data.frame_index = dx12_data.swap_chain->GetCurrentBackBufferIndex();
+	}
+
+	void InitDX12()
+	{
+		HRESULT hr;
+
+		dx12_data.frame_index = 0;
+		dx12_data.viewport = CD3DX12_VIEWPORT(0.f, 0.f, (f32)game_state.width, (f32)game_state.height);
+		dx12_data.scissor_rect = CD3DX12_RECT(0, 0, (LONG)game_state.width, (LONG)game_state.height);
+		dx12_data.rtv_descriptor_size = 0;
+
+#ifdef _DEBUG
+		u32 dxgi_factory_flags = 0;
+		ID3D12Debug* debug_controller = nullptr;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug_controller))))
+		{
+			debug_controller->EnableDebugLayer();
+			dxgi_factory_flags |= DXGI_CREATE_FACTORY_DEBUG;
+		}
+#endif
+
+		IDXGIFactory4* factory;
+		hr = CreateDXGIFactory2(dxgi_factory_flags, IID_PPV_ARGS(&factory));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to create DXGI factory...");
+			return;
+		}
+
+		IDXGIAdapter1* hardware_adapter = nullptr;
+		
+		IDXGIAdapter1* adapter = nullptr;
+		for (u32 adapter_index = 0; factory->EnumAdapters1(adapter_index, &adapter) != DXGI_ERROR_NOT_FOUND; ++adapter_index)
+		{
+			DXGI_ADAPTER_DESC1 desc;
+			adapter->GetDesc1(&desc);
+
+			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;
+
+			hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), nullptr);
+			if (SUCCEEDED(hr))
+			{
+				break;
+			}
+		}
+
+		hardware_adapter = adapter;
+		hr = D3D12CreateDevice(hardware_adapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&dx12_data.rt_device));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("DX12 device creation failed...");
+			return;
+		}
+
+		D3D12_COMMAND_QUEUE_DESC queue_desc = {};
+		queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+		queue_desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+		hr = dx12_data.rt_device->CreateCommandQueue(&queue_desc, IID_PPV_ARGS(&dx12_data.command_queue));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("DX12 command queue creation failed...");
+			return;
+		}
+
+		DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = {};
+		swap_chain_desc.BufferCount = frame_count;
+		swap_chain_desc.Width = game_state.width;
+		swap_chain_desc.Height = game_state.height;
+		swap_chain_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		swap_chain_desc.SampleDesc.Count = 1;
+
+		IDXGISwapChain1* swap_chain = nullptr;
+		hr = factory->CreateSwapChainForHwnd(dx12_data.command_queue, game_state.hwnd, &swap_chain_desc, nullptr, nullptr, &swap_chain);
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("DX12 swapchain creation failed...");
+			return;
+		}
+
+		hr = factory->MakeWindowAssociation(game_state.hwnd, DXGI_MWA_NO_ALT_ENTER);
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("DX12 window association failed...");
+			return;
+		}
+
+		dx12_data.swap_chain = (IDXGISwapChain3*)swap_chain;		// this is not how it's done in the sample...might be a point of failure
+		dx12_data.frame_index = dx12_data.swap_chain->GetCurrentBackBufferIndex();
+
+		D3D12_DESCRIPTOR_HEAP_DESC rtv_heap_desc = {};
+		rtv_heap_desc.NumDescriptors = frame_count;
+		rtv_heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+		rtv_heap_desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		hr = dx12_data.rt_device->CreateDescriptorHeap(&rtv_heap_desc, IID_PPV_ARGS(&dx12_data.rtv_heap));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("DX12 descriptor heap creation failed...");
+			return;
+		}
+
+		dx12_data.rtv_descriptor_size = dx12_data.rt_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(dx12_data.rtv_heap->GetCPUDescriptorHandleForHeapStart());
+		for (u32 n = 0; n < frame_count; n++)
+		{
+			hr = dx12_data.swap_chain->GetBuffer(n, IID_PPV_ARGS(&dx12_data.render_targets[n]));
+			if (FAILED(hr))
+			{
+				MARS_CORE_ERROR("DX12 swapchain buffer #", n, " creation failed...");
+				return;
+			}
+
+			dx12_data.rt_device->CreateRenderTargetView(dx12_data.render_targets[n], nullptr, rtv_handle);
+			rtv_handle.Offset(1, dx12_data.rtv_descriptor_size);
+		}
+
+		dx12_data.rt_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&dx12_data.command_allocator));
+	}
+
+	void InitDX12Scene()
+	{
+		HRESULT hr;
+
+		CD3DX12_ROOT_SIGNATURE_DESC root_signature_desc = {};
+		root_signature_desc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		ID3DBlob* signature = nullptr;
+		ID3DBlob* error = nullptr;
+
+		hr = D3D12SerializeRootSignature(&root_signature_desc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to serialize DX12 root signature...");
+			return;
+		}
+
+		hr = dx12_data.rt_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&dx12_data.root_signature));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to create DX12 root signature...");
+			return;
+		}
+
+		ID3DBlob* vertex_shader;
+		ID3DBlob* pixel_shader;
+
+#ifdef _DEBUG
+		u32 compile_flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+		u32 compile_flags = 0;
+#endif
+
+		hr = D3DCompileFromFile(L"..\\..\\Mars\\res\\DX12Test.shader", nullptr, nullptr, "VSMain", "vs_5_0", compile_flags, 0, &vertex_shader, &error);
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to compile vertex shader...\n", (char*)error->GetBufferPointer());
+			return;
+		}
+
+		hr = D3DCompileFromFile(L"..\\..\\Mars\\res\\DX12Test.shader", nullptr, nullptr, "PSMain", "ps_5_0", compile_flags, 0, &pixel_shader, &error);
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to compile pixel shader...\n", (char*)error->GetBufferPointer());
+			return;
+		}
+
+		D3D12_INPUT_ELEMENT_DESC input_element_descs[] = 
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(vec3), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+		};
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
+		pso_desc.InputLayout = { input_element_descs, _countof(input_element_descs) };
+		pso_desc.pRootSignature = dx12_data.root_signature;
+		pso_desc.VS = CD3DX12_SHADER_BYTECODE(vertex_shader);
+		pso_desc.PS = CD3DX12_SHADER_BYTECODE(pixel_shader);
+		pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		pso_desc.DepthStencilState.DepthEnable = false;
+		pso_desc.DepthStencilState.StencilEnable = false;
+		pso_desc.SampleMask = UINT_MAX;
+		pso_desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		pso_desc.NumRenderTargets = 1;
+		pso_desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		pso_desc.SampleDesc.Count = 1;
+		
+		hr = dx12_data.rt_device->CreateGraphicsPipelineState(&pso_desc, IID_PPV_ARGS(&dx12_data.pipeline_state));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to create graphics pipeline state...");
+			return;
+		}
+
+		hr = dx12_data.rt_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, dx12_data.command_allocator, dx12_data.pipeline_state, IID_PPV_ARGS(&dx12_data.command_list));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to create DX12 command list...");
+			return;
+		}
+
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to close DX12 command list...");
+			return;
+		}
+
+		Vertex triangle_verts[] = 
+		{
+			Vertex(0.f, 0.25f * ((f32)game_state.width / (f32)game_state.height), 0.f, 1.f, 0.f, 0.f, 1.f),
+			Vertex(0.25f, -0.25f * ((f32)game_state.width / (f32)game_state.height), 0.f, 0.f, 1.f, 0.f, 1.f),
+			Vertex(-0.25f, -0.25f * ((f32)game_state.width / (f32)game_state.height), 0.f, 0.f, 0.f, 1.f, 1.f),
+		};
+
+		hr = dx12_data.rt_device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(sizeof(triangle_verts)), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&dx12_data.vertex_buffer));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to create dx12 vertex buffer...");
+			return;
+		}
+
+		u8* vertex_data_begin = nullptr;
+		CD3DX12_RANGE read_range(0, 0);
+		hr = dx12_data.vertex_buffer->Map(0, &read_range, reinterpret_cast<void**>(&vertex_data_begin));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to copy vertex data into vertex buffer...");
+			return;
+		}
+
+		memcpy(vertex_data_begin, triangle_verts, sizeof(triangle_verts));
+		dx12_data.vertex_buffer->Unmap(0, nullptr);
+
+		dx12_data.vertex_buffer_view.BufferLocation = dx12_data.vertex_buffer->GetGPUVirtualAddress();
+		dx12_data.vertex_buffer_view.StrideInBytes = sizeof(Vertex);
+		dx12_data.vertex_buffer_view.SizeInBytes = sizeof(triangle_verts);
+
+		hr = dx12_data.rt_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&dx12_data.fence));
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to create dx12 fence...");
+			return;
+		}
+
+		dx12_data.fence_value = 1;
+
+		dx12_data.fence_event = CreateEvent(nullptr, false, false, nullptr);
+		if (dx12_data.fence_event == nullptr)
+		{
+			MARS_CORE_ERROR("Failed to create dx12 fence event...");
+			return;
+		}
+
+		WaitForPreviousFrame();
+	}
+
+	void UpdateDX12Renderer() {}
+
+	void PopulateCommandList()
+	{
+		HRESULT hr;
+
+		hr = dx12_data.command_allocator->Reset();
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to reset dx12 command allocator...");
+			return;
+		}
+
+		hr = dx12_data.command_list->Reset(dx12_data.command_allocator, dx12_data.pipeline_state);
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to reset dx12 command list...");
+			return;
+		}
+
+		dx12_data.command_list->SetGraphicsRootSignature(dx12_data.root_signature);
+		dx12_data.command_list->RSSetViewports(1, &dx12_data.viewport);
+		dx12_data.command_list->RSSetScissorRects(1, &dx12_data.scissor_rect);
+
+		dx12_data.command_list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dx12_data.render_targets[dx12_data.frame_index], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(dx12_data.rtv_heap->GetCPUDescriptorHandleForHeapStart(), dx12_data.frame_index, dx12_data.rtv_descriptor_size);
+		dx12_data.command_list->OMSetRenderTargets(1, &rtv_handle, false, nullptr);
+
+		const f32 clear_color[] = { 0.f, 0.f, 0.f, 1.f };
+		dx12_data.command_list->ClearRenderTargetView(rtv_handle, clear_color, 0, nullptr);
+		dx12_data.command_list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		dx12_data.command_list->IASetVertexBuffers(0, 1, &dx12_data.vertex_buffer_view);
+		dx12_data.command_list->DrawInstanced(3, 1, 0, 0);
+
+		dx12_data.command_list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dx12_data.render_targets[dx12_data.frame_index], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+		hr = dx12_data.command_list->Close();
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to close command list...");
+			return;
+		}
+	}
+
+	void DX12Draw()
+	{
+		HRESULT hr;
+		PopulateCommandList();
+
+		ID3D12CommandList* pp_command_lists[] = { dx12_data.command_list };
+		dx12_data.command_queue->ExecuteCommandLists(_countof(pp_command_lists), pp_command_lists);
+
+		hr = dx12_data.swap_chain->Present(1, 0);
+		if (FAILED(hr))
+		{
+			MARS_CORE_ERROR("Failed to present next image in swap chain...");
+			return;
+		}
+
+		WaitForPreviousFrame();
+	}
+
+	void TerminateDX12()
+	{
+		CloseHandle(dx12_data.fence_event);
+		dx12_data.rt_device->Release();
+		dx12_data.command_queue->Release();
+		dx12_data.swap_chain->Release();
+		dx12_data.rtv_heap->Release();
+		dx12_data.command_allocator->Release();
+		dx12_data.root_signature->Release();
+		dx12_data.pipeline_state->Release();
+		dx12_data.command_list->Release();
+		dx12_data.vertex_buffer->Release();
+		dx12_data.fence->Release();
+
+		for (s32 i = 0; i < frame_count; i++)
+		{
+			dx12_data.render_targets[frame_count]->Release();
+		}
+	}
 
 	void InitDX11()
 	{
@@ -135,7 +532,7 @@ namespace Mars
 		dx11_data.device_context->OMSetRenderTargets(1, &dx11_data.render_target_view, nullptr);
 	}
 
-	void InitScene()
+	void InitDX11Scene()
 	{
 		HRESULT hr;
 
@@ -271,7 +668,7 @@ namespace Mars
 		dx11_data.device_context->RSSetViewports(1, &viewport);
 	}
 
-	void UpdateRenderer()
+	void UpdateDX11Renderer()
 	{
 		rot += 0.0005f;
 		if (rot > 2 * PI)
@@ -287,7 +684,7 @@ namespace Mars
 		cube1world = rotation * translation;
 	}
 
-	void Draw()
+	void DX11Draw()
 	{
 		f32 bg_color[4] = { 0.f, 0.f, 0.f, 1.f };
 		dx11_data.device_context->ClearRenderTargetView(dx11_data.render_target_view, bg_color);
