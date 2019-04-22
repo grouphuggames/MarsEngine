@@ -22,9 +22,7 @@ void Fire();
 
 void Fire()
 {
-	Mars::Audio audio;
-	audio.Init();
-	audio.PlayAudio("..\\..\\Mars\\res\\music.wav");
+	Mars::audio_system.PlayAudio("..\\..\\Mars\\res\\music.wav");
 }
 
 Mars::Application* Mars::CreateApplication()

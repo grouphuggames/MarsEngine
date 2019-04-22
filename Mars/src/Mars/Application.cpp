@@ -3,7 +3,6 @@
 #include "vec4.h"
 #include "Debug.h"
 #include "Utils.h"
-#include "Renderer.h"
 
 
 namespace Mars
@@ -17,9 +16,7 @@ namespace Mars
     void Application::Run()
     {
 		GameStartup();
-		InitDX12();
-		InitDX12Scene();
-		dx12_data.command_list->Close();
+		InitSystems();
 
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
@@ -42,11 +39,11 @@ namespace Mars
 			// game time stuff goes here
 			UpdateDX12Renderer();
 			DX12Draw();
-
+			
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
 		}
 
-		TerminateDX12();
+		TerminateSystems();
     }
 }

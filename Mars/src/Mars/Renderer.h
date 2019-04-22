@@ -61,17 +61,6 @@ namespace Mars
 		HANDLE fence_event;
 	} dx12_data;
 
-	struct AccelerationStructureBuffers
-	{
-		ID3D12Resource* scratch;
-		ID3D12Resource* result;
-		ID3D12Resource* instance_desc;
-	};
-
-	ID3D12Resource* blas;
-	AccelerationStructureBuffers tlas_buffers;
-	MVector<std::pair<ID3D12Resource*, mat4>> instances;
-
 	struct Vertex
 	{
 		Vertex() = default;
