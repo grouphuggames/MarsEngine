@@ -84,6 +84,5 @@ namespace Mars
 			delete[] data;
 			data = nullptr;
 		}
-
 	};
 }

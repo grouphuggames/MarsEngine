@@ -9,6 +9,8 @@
 #define fourccXWMA 'AMWX'
 #define fourccDPDS 'sdpd'
 
+#define WIN32_CHECK(result) if (result < 0) { MARS_CORE_ERROR(#result, " was not properly executed..."); }
+
 
 namespace Mars
 {
@@ -21,20 +23,8 @@ namespace Mars
 		{
 			if (audio == nullptr)
 			{
-				HRESULT hr;
-				hr = XAudio2Create(&audio, 0, XAUDIO2_DEFAULT_PROCESSOR);
-				if (FAILED(hr))
-				{
-					MARS_CORE_ERROR("FAILED TO INIT AUDIO!");
-					return;
-				}
-
-				hr = audio->CreateMasteringVoice(&master_voice);
-				if (FAILED(hr))
-				{
-					MARS_CORE_ERROR("FAILED TO CREATE AUDIO MASTER VOICE!");
-					return;
-				}
+				WIN32_CHECK(XAudio2Create(&audio, 0, XAUDIO2_DEFAULT_PROCESSOR));
+				WIN32_CHECK(audio->CreateMasteringVoice(&master_voice));
 			}
 		}
 
@@ -47,26 +37,10 @@ namespace Mars
 			OpenAudioFile(info);
 
 			IXAudio2SourceVoice* source_voice;
-			HRESULT hr = audio->CreateSourceVoice(&source_voice, (WAVEFORMATEX*)&info.wfx);
-			if (FAILED(hr))
-			{
-				MARS_CORE_ERROR("FAILED TO CREATE SOURCE VOICE");
-				return;
-			}
+			WIN32_CHECK(audio->CreateSourceVoice(&source_voice, (WAVEFORMATEX*)&info.wfx));
+			WIN32_CHECK(source_voice->SubmitSourceBuffer(&info.buffer));
 
-			hr = source_voice->SubmitSourceBuffer(&info.buffer);
-			if (FAILED(hr))
-			{
-				MARS_CORE_ERROR("FAILED TO SUBMIT SOURCE BUFFER");
-				return;
-			}
-
-			hr = source_voice->Start(0);
-			if (FAILED(hr))
-			{
-				MARS_CORE_ERROR("FAILED TO START AUDIO PLAYBACK");
-				return;
-			}
+			WIN32_CHECK(source_voice->Start(0));
 		}
 
 	private:

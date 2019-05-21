@@ -37,8 +37,9 @@ namespace Mars
 			}
 
 			// game time stuff goes here
-			UpdateDX12Renderer();
-			DX12Draw();
+			
+			// update game data
+			// render scene
 			
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;

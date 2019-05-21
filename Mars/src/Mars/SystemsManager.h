@@ -10,15 +10,16 @@ namespace Mars
 
 	void InitSystems()
 	{
-		InitDX12();
-		InitDX12Scene();
-		dx12_data.command_list->Close();
+		//InitDX11();
+		//InitDX11Scene();
+		InitGL();
+		InitGLScene();
 
 		audio_system.Init();
 	}
 
 	void TerminateSystems()
 	{
-		TerminateDX12();
+		//TerminateDX11();
 	}
 }

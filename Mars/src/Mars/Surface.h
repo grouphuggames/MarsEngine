@@ -51,6 +51,4 @@ namespace Mars
 		ShowWindow(game_state.hwnd, nShowCmd);
 		UpdateWindow(game_state.hwnd);
 	}
-
-	void ResizeWin32Surface();
 }

@@ -12,8 +12,10 @@ s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	auto game = Mars::CreateApplication();
 
+#ifdef WIN32
 	Mars::CreateWin32DebugConsole();
 	Mars::CreateWin32Surface(hInstance, nShowCmd);
+#endif
 
 	game->Run();
 
