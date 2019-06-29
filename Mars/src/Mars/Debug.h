@@ -1,5 +1,7 @@
 #pragma once
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 #include <fstream>
 #include <string>
 #include "MVector.h"
@@ -10,6 +12,7 @@
 
 namespace Mars
 {
+#ifdef _WIN32
 	void CreateWin32DebugConsole()
 	{
 		LPCTSTR console_name = "Debug Console";
@@ -17,6 +20,7 @@ namespace Mars
 		SetConsoleTitle(console_name);
 		freopen("CONOUT$", "w", stdout);
 	}
+#endif
 
 	struct HotInt
 	{

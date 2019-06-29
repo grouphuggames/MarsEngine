@@ -4,10 +4,14 @@ file(GLOB_RECURSE sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 
 add_library(Mars SHARED ${headers} ${sources})
 
-target_link_libraries(Mars PUBLIC "d3d12.lib" "dxgi.lib" "d3dcompiler.lib" "d3d11.lib")
+#target_link_libraries(Mars PUBLIC "d3d12.lib" "dxgi.lib" "d3dcompiler.lib" "d3d11.lib")
 
 target_include_directories(Mars PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-target_compile_definitions(Mars PUBLIC ME_PLATFORM_WINDOWS)
+
+if (WIN32)
+    target_compile_definitions(Mars PUBLIC ME_PLATFORM_WINDOWS)
+endif()
+
 target_compile_definitions(Mars PUBLIC _CRT_SECURE_NO_WARNINGS)
 
 target_compile_definitions(Mars PRIVATE ME_BUILD_DLL)

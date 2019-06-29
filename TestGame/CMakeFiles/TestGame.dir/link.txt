@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/TestGame.dir/src/Game.cpp.o  -o TestGame -Wl,-rpath,/home/pharaoht8/MarsEngine/Mars ../Mars/libMars.so 

@@ -1,5 +1,6 @@
 #include <Mars.h>
 #include <Mars/MMath.h>
+#include <Mars/mat4.h>
 #include <Mars/MVector.h>
 #include <Mars/Audio.h>
 #include <Mars/Debug.h>
@@ -13,7 +14,7 @@ public:
 	// use this function to set up game data for each game to start with
 	void GameStartup()
 	{
-		MARS_INFO("Game Is Running!");
+		MARS_INFO("Game Is Running!\n");
 	}
 };
 
@@ -22,7 +23,7 @@ void Fire();
 
 void Fire()
 {
-	Mars::audio_system.PlayAudio("..\\..\\Mars\\res\\music.wav");
+	//Mars::audio_system.PlayAudio("..\\..\\Mars\\res\\music.wav");
 }
 
 Mars::Application* Mars::CreateApplication()

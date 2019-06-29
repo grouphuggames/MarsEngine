@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.7)
 project(MarsEngine VERSION 0.1.0)
 
 if (MSVC)
@@ -8,6 +8,11 @@ if (MSVC)
 	add_compile_options("/Gv")
 	add_compile_options("/fp:fast")
 	add_link_options("/SUBSYSTEM:WINDOWS")
+elseif (CMAKE_COMPILER_IS_GNUCXX)
+    add_compile_options("-std=c++14")
+    add_compile_options("-O2")
+    add_compile_options("-ffast-math")
+    add_compile_options("-msse2")
 endif()
 
 add_subdirectory(Mars)

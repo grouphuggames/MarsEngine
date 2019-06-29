@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #pragma once
 #include "Core.h"
 #include <xaudio2.h>
@@ -175,3 +177,5 @@ namespace Mars
 		IXAudio2MasteringVoice* master_voice = nullptr;
 	};
 }
+
+#endif

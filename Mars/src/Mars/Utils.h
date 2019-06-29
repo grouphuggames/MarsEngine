@@ -13,6 +13,7 @@ namespace Mars
 		MARS_SECOND
 	};
 
+#ifdef _WIN32
 	struct TimerInfo
 	{
 		MARS_TIME time_scale;
@@ -20,6 +21,15 @@ namespace Mars
 		std::chrono::time_point<std::chrono::steady_clock> timer_stop;
 		f32 time_delta;
 	};
+#else
+    struct TimerInfo
+	{
+		MARS_TIME time_scale;
+		std::chrono::time_point<std::chrono::system_clock> timer_start;
+		std::chrono::time_point<std::chrono::system_clock> timer_stop;
+		f32 time_delta;
+	};
+#endif
 
 	void StartTimer(TimerInfo& info)
 	{
@@ -39,7 +49,7 @@ namespace Mars
 			info.time_delta = (f32)std::chrono::duration_cast<std::chrono::seconds>(info.timer_stop - info.timer_start).count();
 	}
 
-	__forceinline void ShowFPSCounter(bool active)
+	MARS_INLINE void ShowFPSCounter(bool active)
 	{
 		if (active)
 		{

@@ -18,15 +18,17 @@ namespace Mars
 		GameStartup();
 		InitSystems();
 
+#ifdef _WIN32
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
+#endif
 
 		while (game_state.running)
 		{
 			TimerInfo info = {};
 			info.time_scale = MARS_TIME::MARS_MILLISECOND;		// for framerate timer, this must be set to milliseconds
 			StartTimer(info);
-
+#ifdef _WIN32
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
 				if (msg.message == WM_QUIT)
@@ -35,8 +37,10 @@ namespace Mars
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
+#endif
 
 			// game time stuff goes here
+            //MARS_CORE_INFO("GAME LOOP IS WORKING!!");
 			
 			// update game data
 			// render scene

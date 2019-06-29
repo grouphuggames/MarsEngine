@@ -1,0 +1,8 @@
+/home/pharaoht8/MarsEngine/CMakeFiles/rebuild_cache.dir
+/home/pharaoht8/MarsEngine/CMakeFiles/edit_cache.dir
+/home/pharaoht8/MarsEngine/Mars/CMakeFiles/rebuild_cache.dir
+/home/pharaoht8/MarsEngine/Mars/CMakeFiles/edit_cache.dir
+/home/pharaoht8/MarsEngine/Mars/CMakeFiles/Mars.dir
+/home/pharaoht8/MarsEngine/TestGame/CMakeFiles/rebuild_cache.dir
+/home/pharaoht8/MarsEngine/TestGame/CMakeFiles/edit_cache.dir
+/home/pharaoht8/MarsEngine/TestGame/CMakeFiles/TestGame.dir

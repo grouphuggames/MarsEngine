@@ -5,6 +5,7 @@
 
 namespace Mars
 {
+#ifdef _WIN32
 	void CreateWin32Surface(HINSTANCE hInstance, s32 nShowCmd)
 	{
 		// create win32 window
@@ -51,4 +52,5 @@ namespace Mars
 		ShowWindow(game_state.hwnd, nShowCmd);
 		UpdateWindow(game_state.hwnd);
 	}
+#endif
 }

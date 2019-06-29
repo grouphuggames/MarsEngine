@@ -2,16 +2,30 @@
 
 
 #include <iostream>
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 #include <cstdint>
 
-
-#ifdef ME_BUILD_DLL
-    #define MARS_API __declspec(dllexport)
+#ifdef _WIN32
+    #ifdef ME_BUILD_DLL
+        #define MARS_API __declspec(dllexport)
+    #else
+        #define MARS_API __declspec(dllimport)
+    #endif
 #else
-    #define MARS_API __declspec(dllimport)
+    #ifdef ME_BUILD_DLL
+        #define MARS_API __attribute__((visibility("default")))
+    #else
+        #define MARS_API
+    #endif
 #endif
-
+    
+#ifdef _WIN32
+    #define MARS_INLINE __forceinline
+#else
+    #define MARS_INLINE __attribute__((always_inline))
+#endif
 
 using u8 = uint8_t;
 using s32 = int32_t;
@@ -24,16 +38,21 @@ namespace Mars
 {
 	class MARS_API Log
 	{
+    private:
+        static void PrintToLog(){}
+        
 	public:
 
-		template<typename... T>
-		static void PrintToLog(T&&... t)
+		template<typename T, typename... Types>
+		static void PrintToLog(T var1, Types... var2)
 		{
-			(std::cout << ... << t) << '\n';
+			std::cout << var1 << "\n";
+            PrintToLog(var2...);
 		}
 	};
 }
 
+#ifdef _WIN32
 #define MARS_CORE_INFO(...)		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN); \
 								std::cout << "CORE INFO: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__);
@@ -64,6 +83,30 @@ namespace Mars
 								std::cout << "APP ERROR: "; \
 								Mars::Log::PrintToLog(__VA_ARGS__); \
 								(std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#else
+#define MARS_CORE_INFO(...)         std::cout << "CORE INFO: "; \
+								    Mars::Log::PrintToLog(__VA_ARGS__);
+#define MARS_CORE_INFO_EXTRA(...)   std::cout << "CORE INFO EXTRA: "; \
+                                    Mars::Log::PrintToLog(__VA_ARGS__); \
+								    (std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#define MARS_CORE_WARN(...)         std::cout << "CORE WARNING: "; \
+								    Mars::Log::PrintToLog(__VA_ARGS__); \
+								    (std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#define MARS_CORE_ERROR(...)        std::cout << "CORE ERROR: "; \
+								    Mars::Log::PrintToLog(__VA_ARGS__); \
+								    (std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#define MARS_INFO(...)              std::cout << "APP INFO: "; \
+								    Mars::Log::PrintToLog(__VA_ARGS__);
+#define MARS_INFO_EXTRA(...)        std::cout << "APP INFO EXTRA: "; \
+								    Mars::Log::PrintToLog(__VA_ARGS__); \
+								    (std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#define MARS_WARN(...)              std::cout << "APP WARNING: "; \
+								    Mars::Log::PrintToLog(__VA_ARGS__); \
+								    (std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#define MARS_ERROR(...)             std::cout << "APP ERROR: "; \
+								    Mars::Log::PrintToLog(__VA_ARGS__); \
+								    (std::cout << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n')
+#endif
 
 
 // adding MARS_API here fixed issue with having to add game_state.hwnd = hwnd to Application.cpp
@@ -76,7 +119,9 @@ public:
 	f32 framerate = 0.f;
 	bool running = true;
 	bool fullscreen = false;
+#ifdef _WIN32
 	HWND hwnd = NULL;
+#endif
 } game_state;
 
 struct
