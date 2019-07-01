@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-#if 0
+#if _WIN32
 #include <dxgi1_6.h>
 #include <d3d12.h>
 #include <d3d11_4.h>
@@ -28,7 +28,7 @@ namespace Mars
 
 	}
 
-#if 0
+#if _WIN32
 	// DirectX 11 & 12
 	struct Viewport
 	{

@@ -1,15 +1,14 @@
 #pragma once
 #include "Surface.h"
 #include "Debug.h"
+#include <thread>
 
 extern Mars::Application* Mars::CreateApplication();
 
 #ifdef _WIN32
 s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	SYSTEM_INFO system = {};
-	GetSystemInfo(&system);
-	system_info.core_count = system.dwNumberOfProcessors;
+	system_info.core_count = std::thread::hardware_concurrency();
 
 	auto game = Mars::CreateApplication();
 
@@ -24,6 +23,8 @@ s32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #else
 s32 main()
 {
+	system_info.core_count = std::thread::hardware_concurrency();
+
     auto game = Mars::CreateApplication();
     
     game->Run();
