@@ -40,7 +40,6 @@ namespace Mars
 #endif
 
 			// game time stuff goes here
-            //MARS_CORE_INFO("GAME LOOP IS WORKING!!");
 			
 			// update game data
 			// render scene

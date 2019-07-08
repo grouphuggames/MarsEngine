@@ -23,7 +23,7 @@ namespace Mars
 
 		WNDCLASSEX wc;
 		wc.cbSize = sizeof(WNDCLASSEX);
-		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 		wc.lpfnWndProc = ProcessInput;
 		wc.cbClsExtra = NULL;
 		wc.cbWndExtra = NULL;

@@ -1,6 +1,8 @@
 #pragma once
 #include "Core.h"
-//#include "Audio.h"
+#ifdef _WIN32
+#include "Audio.h"
+#endif
 #include "Renderer.h"
 
 
@@ -10,8 +12,6 @@ namespace Mars
 
 	void InitSystems()
 	{
-		//InitDX11();
-		//InitDX11Scene();
 		//InitGL();
 		//InitGLScene();
 
@@ -20,6 +20,6 @@ namespace Mars
 
 	void TerminateSystems()
 	{
-		//TerminateDX11();
+		
 	}
 }
