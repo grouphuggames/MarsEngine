@@ -23,7 +23,9 @@ void Fire();
 
 void Fire()
 {
-	//Mars::audio_system.PlayAudio("..\\..\\Mars\\res\\music.wav");
+#ifdef _WIN32
+	Mars::audio_system.PlayAudio("..\\..\\Mars\\res\\music.wav");
+#endif
 }
 
 Mars::Application* Mars::CreateApplication()

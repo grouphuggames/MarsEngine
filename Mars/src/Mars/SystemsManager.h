@@ -8,18 +8,22 @@
 
 namespace Mars
 {
-	//MARS_API Audio audio_system;
+#ifdef _WIN32
+	MARS_API Audio audio_system;
+#endif
 
 	void InitSystems()
 	{
-		//InitGL();
-		//InitGLScene();
+		InitGL();
+		InitGLScene();
 
-		//audio_system.Init();
+#ifdef _WIN32
+		audio_system.Init();
+#endif
 	}
 
 	void TerminateSystems()
 	{
-		
+		wglDeleteContext(game_state.render_context);
 	}
 }

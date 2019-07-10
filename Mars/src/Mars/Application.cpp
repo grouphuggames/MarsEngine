@@ -38,11 +38,10 @@ namespace Mars
 				DispatchMessage(&msg);
 			}
 #endif
-
-			// game time stuff goes here
-			
 			// update game data
+
 			// render scene
+			RenderScene();
 			
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;

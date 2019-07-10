@@ -121,6 +121,7 @@ public:
 	bool fullscreen = false;
 #ifdef _WIN32
 	HWND hwnd = NULL;
+	HGLRC render_context = NULL;
 #endif
 } game_state;
 
