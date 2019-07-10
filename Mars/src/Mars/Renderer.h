@@ -177,6 +177,37 @@ namespace Mars
 #endif
 	}
 
+	unsigned char* LoadBMP(const char* path)
+	{
+		FILE* file = fopen(path, "rb");
+		if (!file)
+		{
+			MARS_CORE_ERROR("Cannot open file: ", path);
+			return nullptr;
+		}
+
+		unsigned char header[54];
+		if (fread(header, 1, 54, file) != 54 || header[0]!='B' || header[1]!='M')
+		{
+			MARS_CORE_ERROR("File: ", path, " is not a BMP!");
+			return nullptr;
+		}
+
+		u32 data_position = *(int*)&(header[0x0A]);
+		u32 image_size = *(int*)&(header[0x22]);
+		u32 width = *(int*)&(header[0x12]);
+		u32 height = *(int*)&(header[0x16]);
+
+		if (image_size == 0) { image_size = 3 * width * height; }
+		if (data_position == 0) { data_position = 54; }
+
+		unsigned char* data = new unsigned char[image_size];	// as of right now, this memory is not being cleaned up...
+		fread(data, 1, image_size, file);
+		fclose(file);
+
+		return data;
+	}
+
 	u32 vertex_buffer;
 	u32 element_buffer;
 
