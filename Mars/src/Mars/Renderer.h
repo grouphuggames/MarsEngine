@@ -202,7 +202,7 @@ namespace Mars
 		if (data_position == 0) { data_position = 54; }
 
 		unsigned char* data = new unsigned char[image_size];	// as of right now, this memory is not being cleaned up...
-		MARS_CORE_WARN_EXTRA("Memory here is not being cleaned up!! Don't forget about me!");
+		MARS_CORE_WARN("Memory here is not being cleaned up!! Don't forget about me!");
 		fread(data, 1, image_size, file);
 		fclose(file);
 
