@@ -321,7 +321,7 @@ namespace Mars
 		GLTexture wall = LoadBMP("C://MarsEngine//Mars//res//wall.bmp");
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wall.width, wall.height, 0, GL_BGR, GL_UNSIGNED_BYTE, wall.data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		// FREE THE MEMORY FROM THE TEXTURE HERE!!!
+		free(wall.data);
 	}
 
 	void RenderScene()
