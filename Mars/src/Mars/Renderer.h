@@ -33,6 +33,7 @@ namespace Mars
 	PFNGLLINKPROGRAMPROC glLinkProgram;
 	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+	PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 
 #ifdef _WIN32
 #define ASSERT(x) if (!(x)) __debugbreak();
@@ -61,15 +62,24 @@ namespace Mars
 
 	const char *vertexShaderSource = "#version 460 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 1) in vec3 aColor;\n"
+		"layout (location = 2) in vec2 aTexCoord;\n"
+		"out vec3 ourColor;\n"
+		"out vec2 TexCoord;\n"
 		"void main()\n"
 		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"   gl_Position = vec4(aPos, 1.0);\n"
+		"	ourColor = aColor;\n"
+		"	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
 		"}\0";
 	const char *fragmentShaderSource = "#version 460 core\n"
 		"out vec4 FragColor;\n"
+		"in vec3 ourColor;\n"
+		"in vec2 TexCoord;\n"
+		"uniform sampler2D texture1;\n"
 		"void main()\n"
 		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"   FragColor = texture(texture1, TexCoord);\n"
 		"}\n\0";
 
 	const s32 pixel_format_attrib_list[] = 
@@ -157,6 +167,7 @@ namespace Mars
 		glLinkProgram = (PFNGLLINKPROGRAMPROC)wglGetProcAddress("glLinkProgram");
 		wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
 		wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
+		glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)wglGetProcAddress("glGenerateMipmap");
 
 		s32 pixel_format_index;
 		u32 num_formats;
@@ -177,46 +188,55 @@ namespace Mars
 #endif
 	}
 
-	unsigned char* LoadBMP(const char* path)
+	struct GLTexture
 	{
+		unsigned char* data = nullptr;
+		s32 width;
+		s32 height;
+	};
+
+	GLTexture LoadBMP(const char* path)
+	{
+		GLTexture res;
+
 		FILE* file = fopen(path, "rb");
 		if (!file)
 		{
 			MARS_CORE_ERROR("Cannot open file: ", path);
-			return nullptr;
+			return GLTexture();
 		}
 
 		unsigned char header[54];
 		if (fread(header, 1, 54, file) != 54 || header[0]!='B' || header[1]!='M')
 		{
 			MARS_CORE_ERROR("File: ", path, " is not a BMP!");
-			return nullptr;
+			return GLTexture();
 		}
 
 		u32 data_position = *(int*)&(header[0x0A]);
 		u32 image_size = *(int*)&(header[0x22]);
-		u32 width = *(int*)&(header[0x12]);
-		u32 height = *(int*)&(header[0x16]);
+		res.width = *(int*)&(header[0x12]);
+		res.height = *(int*)&(header[0x16]);
 
-		if (image_size == 0) { image_size = 3 * width * height; }
+		if (image_size == 0) { image_size = 3 * res.width * res.height; }
 		if (data_position == 0) { data_position = 54; }
 
-		unsigned char* data = new unsigned char[image_size];	// as of right now, this memory is not being cleaned up...
+		res.data = new unsigned char[image_size];	// as of right now, this memory is not being cleaned up...
 		MARS_CORE_WARN("Memory here is not being cleaned up!! Don't forget about me!");
-		fread(data, 1, image_size, file);
+		fread(res.data, 1, image_size, file);
 		fclose(file);
 
-		return data;
+		return res;
 	}
 
 	u32 vertex_buffer;
 	u32 element_buffer;
 
 	static f32 vertex_buffer_data[] = {
-		0.5f, 0.5f, 0.f,
-		0.5f, -0.5f, 0.f,
-		-0.5f, -0.5f, 0.f,
-		-0.5f, 0.5f, 0.f
+		0.5f, 0.5f, 0.f, 1.f, 0.f, 0.f, 1.f, 1.f,
+		0.5f, -0.5f, 0.f, 0.f, 1.f, 0.f, 1.f, 0.f,
+		-0.5f, -0.5f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
+		-0.5f, 0.5f, 0.f, 1.f, 1.f, 0.f, 0.f, 1.f
 	};
 
 	static u32 indices[] =
@@ -227,6 +247,7 @@ namespace Mars
 
 	s32 shader_program;
 	u32 vertex_array;
+	u32 texture;
 
 	void InitGLScene()
 	{
@@ -281,17 +302,34 @@ namespace Mars
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer));
 		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
 
-		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void*)0));
+		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void*)0));
 		GLCall(glEnableVertexAttribArray(0));
-		
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-		GLCall(glBindVertexArray(0));
+
+		GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void*)(3 * sizeof(f32))));
+		GLCall(glEnableVertexAttribArray(1));
+
+		GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void*)(6 * sizeof(f32))));
+		GLCall(glEnableVertexAttribArray(2));
+
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		GLTexture wall = LoadBMP("C://MarsEngine//Mars//res//wall.bmp");
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wall.width, wall.height, 0, GL_BGR, GL_UNSIGNED_BYTE, wall.data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		// FREE THE MEMORY FROM THE TEXTURE HERE!!!
 	}
 
 	void RenderScene()
 	{
-		GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
+		GLCall(glClearColor(1.f, 0.f, 0.f, 1.f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+		glBindTexture(GL_TEXTURE_2D, texture);
 
 		GLCall(glUseProgram(shader_program));
 		GLCall(glBindVertexArray(vertex_array));
