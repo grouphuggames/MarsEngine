@@ -66,10 +66,12 @@ namespace Mars
 		"layout (location = 0) in vec3 aPos;\n"
 		"layout (location = 1) in vec2 aTexCoord;\n"
 		"out vec2 TexCoord;\n"
-		"uniform mat4 transform;\n"
+		"uniform mat4 model;\n"
+		"uniform mat4 view;\n"
+		"uniform mat4 projection;\n"
 		"void main()\n"
 		"{\n"
-		"   gl_Position = transform * vec4(aPos, 1.0);\n"
+		"   gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
 		"	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
 		"}\0";
 	const char *fragmentShaderSource = "#version 460 core\n"
@@ -186,6 +188,9 @@ namespace Mars
 
 		wglDeleteContext(tmp_render_context);
 		wglMakeCurrent(device_context, game_state.render_context);
+
+		glEnable(GL_DEPTH_TEST);
+
 		MARS_CORE_INFO("OpenGL Version: ", (char*)glGetString(GL_VERSION));
 #endif
 	}
@@ -233,11 +238,48 @@ namespace Mars
 	u32 vertex_buffer;
 	u32 element_buffer;
 
-	static f32 vertex_buffer_data[] = {
-		0.5f, 0.5f, 0.f, 1.f, 1.f,
-		0.5f, -0.5f, 0.f, 1.f, 0.f,
-		-0.5f, -0.5f, 0.f, 0.f, 0.f,
-		-0.5f, 0.5f, 0.f, 0.f, 1.f
+	float vertex_buffer_data[] = {
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
 	static u32 indices[] =
@@ -324,19 +366,28 @@ namespace Mars
 
 	void RenderScene()
 	{
-		GLCall(glClearColor(1.f, 0.f, 0.f, 1.f));
+		GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		mat4 transform = mat4(1.f);
-		transform *= mat4::Rotate(vec3(0.f, 0.f, 1.f), game_state.elapsed_time);
-		transform *= mat4::Translate(vec3(0.5f, -0.5f, 0.f));
-
 		GLCall(glUseProgram(shader_program));
-		glUniformMatrix4fv(glGetUniformLocation(shader_program, "transform"), 1, GL_FALSE, transform.GetData());
+		
+		mat4 model(1.f);
+		mat4 view(1.f);
+		mat4 projection(1.f);
+
+		model *= mat4::Rotate(vec3(0.5f, 1.f, 0.f), game_state.elapsed_time * ToRadians(50.f));
+		view *= mat4::Translate(vec3(0.f, 0.f, 3.f));
+		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.width / (f32)game_state.height, 0.1f, 100.f);
+
+		glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, model.GetData());
+		glUniformMatrix4fv(glGetUniformLocation(shader_program, "view"), 1, GL_FALSE, view.GetData());
+		glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, projection.GetData());
+
 		GLCall(glBindVertexArray(vertex_array));
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+		//GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		SwapBuffers(GetDC(game_state.hwnd));
 	}

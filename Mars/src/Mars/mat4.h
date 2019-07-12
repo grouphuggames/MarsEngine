@@ -116,32 +116,34 @@ namespace Mars
 			f32 c = cosf(angle);
 			f32 s = sinf(angle);
 			f32 omc = 1.f - c;
+
+			axis = vec3::Normalize(axis);
             
 #ifdef _WIN32
-			result.data[0].m128_f32[0] = axis.x() * omc + c;
-			result.data[0].m128_f32[1] = axis.y() * axis.x() * omc + axis.z() * s;
-			result.data[0].m128_f32[2] = axis.x() * axis.z() * omc - axis.y() * s;
+			result.data[0].m128_f32[0] = axis.x() * axis.x() * omc + c;
+			result.data[0].m128_f32[1] = axis.y() * axis.x() * omc - axis.z() * s;
+			result.data[0].m128_f32[2] = axis.x() * axis.z() * omc + axis.y() * s;
 
-			result.data[1].m128_f32[0] = axis.x() * axis.y() * omc - axis.z() * s;
-			result.data[1].m128_f32[1] = axis.y() * omc + c;
-			result.data[1].m128_f32[2] = axis.y() * axis.z() * omc + axis.x() * s;
+			result.data[1].m128_f32[0] = axis.x() * axis.y() * omc + axis.z() * s;
+			result.data[1].m128_f32[1] = axis.y() * axis.y() * omc + c;
+			result.data[1].m128_f32[2] = axis.y() * axis.z() * omc - axis.x() * s;
 
-			result.data[2].m128_f32[0] = axis.x() * axis.z() * omc + axis.y() * s;
-			result.data[2].m128_f32[1] = axis.y() * axis.z() * omc - axis.x() * s;
-			result.data[2].m128_f32[2] = axis.z() * omc + c;
+			result.data[2].m128_f32[0] = axis.x() * axis.z() * omc - axis.y() * s;
+			result.data[2].m128_f32[1] = axis.y() * axis.z() * omc + axis.x() * s;
+			result.data[2].m128_f32[2] = axis.z() * axis.z() * omc + c;
             
 #else
-            result.data[0][0] = axis.x() * omc + c;
-			result.data[0][1] = axis.y() * axis.x() * omc + axis.z() * s;
-			result.data[0][2] = axis.x() * axis.z() * omc - axis.y() * s;
+            result.data[0][0] = axis.x() * axis.x() * omc + c;
+			result.data[0][1] = axis.y() * axis.x() * omc - axis.z() * s;
+			result.data[0][2] = axis.x() * axis.z() * omc + axis.y() * s;
 
-			result.data[1][0] = axis.x() * axis.y() * omc - axis.z() * s;
-			result.data[1][1] = axis.y() * omc + c;
-			result.data[1][2] = axis.y() * axis.z() * omc + axis.x() * s;
+			result.data[1][0] = axis.x() * axis.y() * omc + axis.z() * s;
+			result.data[1][1] = axis.y() * axis.y() * omc + c;
+			result.data[1][2] = axis.y() * axis.z() * omc - axis.x() * s;
 
-			result.data[2][0] = axis.x() * axis.z() * omc + axis.y() * s;
-			result.data[2][1] = axis.y() * axis.z() * omc - axis.x() * s;
-			result.data[2][2] = axis.z() * omc + c;
+			result.data[2][0] = axis.x() * axis.z() * omc - axis.y() * s;
+			result.data[2][1] = axis.y() * axis.z() * omc + axis.x() * s;
+			result.data[2][2] = axis.z() * axis.z() * omc + c;
 #endif
 
 			return result;
