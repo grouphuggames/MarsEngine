@@ -24,7 +24,7 @@
 #ifdef _WIN32
     #define MARS_INLINE __forceinline
 #else
-    #define MARS_INLINE __attribute__((always_inline))
+    #define MARS_INLINE inline
 #endif
 
 using u8 = uint8_t;
@@ -117,6 +117,7 @@ public:
 	s32 width;
 	s32 height;
 	f32 framerate = 0.f;
+	f32 elapsed_time = 0.f;
 	bool running = true;
 	bool fullscreen = false;
 #ifdef _WIN32

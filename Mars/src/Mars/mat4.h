@@ -214,6 +214,12 @@ namespace Mars
 			return result;
 		}
 
+		MARS_INLINE friend mat4 operator*=(mat4& a, const mat4 b)
+		{
+			a = a * b;
+			return a;
+		}
+
 	private:
 		__m128 data[4];
 

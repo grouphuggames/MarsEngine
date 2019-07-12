@@ -3,7 +3,9 @@ file(GLOB_RECURSE sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 
 
 add_library(Mars SHARED ${headers} ${sources})
+if (WIN32)
 target_link_libraries(Mars PUBLIC "opengl32.lib")
+endif()
 
 target_include_directories(Mars PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 

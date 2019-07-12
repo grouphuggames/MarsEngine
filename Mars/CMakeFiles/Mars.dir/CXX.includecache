@@ -24,6 +24,12 @@ Core.h
 SystemsManager.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/SystemsManager.h
 
+/home/pharaoht8/MarsEngine/Mars/src/Mars/Audio.h
+Core.h
+/home/pharaoht8/MarsEngine/Mars/src/Mars/Core.h
+xaudio2.h
+-
+
 /home/pharaoht8/MarsEngine/Mars/src/Mars/Core.h
 iostream
 -
@@ -63,16 +69,6 @@ Core.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/Renderer.h
 Core.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/Core.h
-dxgi1_6.h
--
-d3d12.h
--
-d3d11_4.h
--
-d3dcompiler.h
--
-d3dx12.h
-/home/pharaoht8/MarsEngine/Mars/src/Mars/d3dx12.h
 vec3.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/vec3.h
 vec4.h
@@ -81,10 +77,18 @@ mat4.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/mat4.h
 Debug.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/Debug.h
+gl/GL.h
+-
+glext.h
+/home/pharaoht8/MarsEngine/Mars/src/Mars/glext.h
+wglext.h
+/home/pharaoht8/MarsEngine/Mars/src/Mars/wglext.h
 
 /home/pharaoht8/MarsEngine/Mars/src/Mars/SystemsManager.h
 Core.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/Core.h
+Audio.h
+/home/pharaoht8/MarsEngine/Mars/src/Mars/Audio.h
 Renderer.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/Renderer.h
 
@@ -94,9 +98,21 @@ Core.h
 chrono
 -
 
-/home/pharaoht8/MarsEngine/Mars/src/Mars/d3dx12.h
-d3d12.h
-/home/pharaoht8/MarsEngine/Mars/src/Mars/d3d12.h
+/home/pharaoht8/MarsEngine/Mars/src/Mars/glext.h
+windows.h
+-
+khrplatform.h
+/home/pharaoht8/MarsEngine/Mars/src/Mars/khrplatform.h
+gl/GL.h
+-
+
+/home/pharaoht8/MarsEngine/Mars/src/Mars/khrplatform.h
+stdint.h
+-
+inttypes.h
+-
+stdint.h
+-
 
 /home/pharaoht8/MarsEngine/Mars/src/Mars/mat4.h
 Core.h
@@ -118,5 +134,11 @@ emmintrin.h
 Core.h
 /home/pharaoht8/MarsEngine/Mars/src/Mars/Core.h
 emmintrin.h
+-
+
+/home/pharaoht8/MarsEngine/Mars/src/Mars/wglext.h
+windows.h
+-
+gl/GL.h
 -
 

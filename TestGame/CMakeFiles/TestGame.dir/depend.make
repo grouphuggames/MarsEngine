@@ -15,8 +15,10 @@ TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/Renderer.h
 TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/Surface.h
 TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/SystemsManager.h
 TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/Utils.h
-TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/d3dx12.h
+TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/glext.h
+TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/khrplatform.h
 TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/mat4.h
 TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/vec3.h
 TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/vec4.h
+TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o: Mars/src/Mars/wglext.h
 

@@ -4,6 +4,7 @@
 Mars/CMakeFiles/Mars.dir/src/Mars/Application.cpp.o
  /home/pharaoht8/MarsEngine/Mars/src/Mars/Application.cpp
  /home/pharaoht8/MarsEngine/Mars/src/Mars/Application.h
+ /home/pharaoht8/MarsEngine/Mars/src/Mars/Audio.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/Core.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/Debug.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/MMath.h
@@ -11,7 +12,9 @@ Mars/CMakeFiles/Mars.dir/src/Mars/Application.cpp.o
  /home/pharaoht8/MarsEngine/Mars/src/Mars/Renderer.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/SystemsManager.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/Utils.h
- /home/pharaoht8/MarsEngine/Mars/src/Mars/d3dx12.h
+ /home/pharaoht8/MarsEngine/Mars/src/Mars/glext.h
+ /home/pharaoht8/MarsEngine/Mars/src/Mars/khrplatform.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/mat4.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/vec3.h
  /home/pharaoht8/MarsEngine/Mars/src/Mars/vec4.h
+ /home/pharaoht8/MarsEngine/Mars/src/Mars/wglext.h

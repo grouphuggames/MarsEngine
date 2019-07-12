@@ -18,6 +18,10 @@ namespace Mars
 		GameStartup();
 		InitSystems();
 
+		TimerInfo engine_timer_info = {};
+		engine_timer_info.time_scale = MARS_TIME::MARS_MILLISECOND;
+		StartTimer(engine_timer_info);
+
 #ifdef _WIN32
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));
@@ -41,10 +45,21 @@ namespace Mars
 			// update game data
 
 			// render scene
+#ifdef _WIN32
 			RenderScene();
-			
+#endif
+
+			mat4 transform = mat4(1.f);
+			transform *= mat4::Translate(vec3(0.5f, -0.5f, 0.f));
+			transform *= mat4::Rotate(vec3(0.f, 0.f, 1.f), game_state.elapsed_time);
+
+			MARS_CORE_INFO(transform);
+
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
+
+			StopTimer(engine_timer_info);
+			game_state.elapsed_time = engine_timer_info.time_delta / 1000.f;
 		}
 
 		TerminateSystems();

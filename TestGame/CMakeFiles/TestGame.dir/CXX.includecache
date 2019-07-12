@@ -89,16 +89,6 @@ Mars/src/Mars/Core.h
 Mars/src/Mars/Renderer.h
 Core.h
 Mars/src/Mars/Core.h
-dxgi1_6.h
--
-d3d12.h
--
-d3d11_4.h
--
-d3dcompiler.h
--
-d3dx12.h
-Mars/src/Mars/d3dx12.h
 vec3.h
 Mars/src/Mars/vec3.h
 vec4.h
@@ -107,6 +97,12 @@ mat4.h
 Mars/src/Mars/mat4.h
 Debug.h
 Mars/src/Mars/Debug.h
+gl/GL.h
+-
+glext.h
+Mars/src/Mars/glext.h
+wglext.h
+Mars/src/Mars/wglext.h
 
 Mars/src/Mars/Surface.h
 Core.h
@@ -117,6 +113,8 @@ Mars/src/Mars/Input.h
 Mars/src/Mars/SystemsManager.h
 Core.h
 Mars/src/Mars/Core.h
+Audio.h
+Mars/src/Mars/Audio.h
 Renderer.h
 Mars/src/Mars/Renderer.h
 
@@ -126,9 +124,21 @@ Mars/src/Mars/Core.h
 chrono
 -
 
-Mars/src/Mars/d3dx12.h
-d3d12.h
-Mars/src/Mars/d3d12.h
+Mars/src/Mars/glext.h
+windows.h
+-
+khrplatform.h
+Mars/src/Mars/khrplatform.h
+gl/GL.h
+-
+
+Mars/src/Mars/khrplatform.h
+stdint.h
+-
+inttypes.h
+-
+stdint.h
+-
 
 Mars/src/Mars/mat4.h
 Core.h
@@ -150,5 +160,11 @@ Mars/src/Mars/vec4.h
 Core.h
 Mars/src/Mars/Core.h
 emmintrin.h
+-
+
+Mars/src/Mars/wglext.h
+windows.h
+-
+gl/GL.h
 -
 

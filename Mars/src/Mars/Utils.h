@@ -48,12 +48,4 @@ namespace Mars
 		else if (info.time_scale == MARS_TIME::MARS_SECOND)
 			info.time_delta = (f32)std::chrono::duration_cast<std::chrono::seconds>(info.timer_stop - info.timer_start).count();
 	}
-
-	MARS_INLINE void ShowFPSCounter(bool active)
-	{
-		if (active)
-		{
-			MARS_CORE_INFO(game_state.framerate);
-		}
-	}
 }

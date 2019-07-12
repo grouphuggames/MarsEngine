@@ -14,16 +14,17 @@ namespace Mars
 
 	void InitSystems()
 	{
+#ifdef _WIN32
 		InitGL();
 		InitGLScene();
-
-#ifdef _WIN32
 		audio_system.Init();
 #endif
 	}
 
 	void TerminateSystems()
 	{
+#ifdef _WIN32
 		wglDeleteContext(game_state.render_context);
+#endif
 	}
 }

@@ -4,6 +4,7 @@
 #include "vec4.h"
 #include "mat4.h"
 #include "Debug.h"
+#if 0
 #include <gl/GL.h>
 #include "glext.h"
 #include "wglext.h"
@@ -338,3 +339,4 @@ namespace Mars
 		SwapBuffers(GetDC(game_state.hwnd));
 	}
 }
+#endif

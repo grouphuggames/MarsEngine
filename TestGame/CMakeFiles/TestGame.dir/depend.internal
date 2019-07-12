@@ -16,7 +16,9 @@ TestGame/CMakeFiles/TestGame.dir/src/Game.cpp.o
  Mars/src/Mars/Surface.h
  Mars/src/Mars/SystemsManager.h
  Mars/src/Mars/Utils.h
- Mars/src/Mars/d3dx12.h
+ Mars/src/Mars/glext.h
+ Mars/src/Mars/khrplatform.h
  Mars/src/Mars/mat4.h
  Mars/src/Mars/vec3.h
  Mars/src/Mars/vec4.h
+ Mars/src/Mars/wglext.h
