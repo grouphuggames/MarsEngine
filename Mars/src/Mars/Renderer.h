@@ -4,7 +4,6 @@
 #include "vec4.h"
 #include "mat4.h"
 #include "Debug.h"
-#if 0
 #include <gl/GL.h>
 #include "glext.h"
 #include "wglext.h"
@@ -35,6 +34,8 @@ namespace Mars
 	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 	PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+	PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+	PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 
 #ifdef _WIN32
 #define ASSERT(x) if (!(x)) __debugbreak();
@@ -63,14 +64,12 @@ namespace Mars
 
 	const char *vertexShaderSource = "#version 460 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
-		"layout (location = 1) in vec3 aColor;\n"
-		"layout (location = 2) in vec2 aTexCoord;\n"
-		"out vec3 ourColor;\n"
+		"layout (location = 1) in vec2 aTexCoord;\n"
 		"out vec2 TexCoord;\n"
+		"uniform mat4 transform;\n"
 		"void main()\n"
 		"{\n"
-		"   gl_Position = vec4(aPos, 1.0);\n"
-		"	ourColor = aColor;\n"
+		"   gl_Position = transform * vec4(aPos, 1.0);\n"
 		"	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
 		"}\0";
 	const char *fragmentShaderSource = "#version 460 core\n"
@@ -169,6 +168,8 @@ namespace Mars
 		wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
 		wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 		glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)wglGetProcAddress("glGenerateMipmap");
+		glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)wglGetProcAddress("glUniformMatrix4fv");
+		glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation");
 
 		s32 pixel_format_index;
 		u32 num_formats;
@@ -222,8 +223,7 @@ namespace Mars
 		if (image_size == 0) { image_size = 3 * res.width * res.height; }
 		if (data_position == 0) { data_position = 54; }
 
-		res.data = new unsigned char[image_size];	// as of right now, this memory is not being cleaned up...
-		MARS_CORE_WARN("Memory here is not being cleaned up!! Don't forget about me!");
+		res.data = new unsigned char[image_size];
 		fread(res.data, 1, image_size, file);
 		fclose(file);
 
@@ -234,10 +234,10 @@ namespace Mars
 	u32 element_buffer;
 
 	static f32 vertex_buffer_data[] = {
-		0.5f, 0.5f, 0.f, 1.f, 0.f, 0.f, 1.f, 1.f,
-		0.5f, -0.5f, 0.f, 0.f, 1.f, 0.f, 1.f, 0.f,
-		-0.5f, -0.5f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
-		-0.5f, 0.5f, 0.f, 1.f, 1.f, 0.f, 0.f, 1.f
+		0.5f, 0.5f, 0.f, 1.f, 1.f,
+		0.5f, -0.5f, 0.f, 1.f, 0.f,
+		-0.5f, -0.5f, 0.f, 0.f, 0.f,
+		-0.5f, 0.5f, 0.f, 0.f, 1.f
 	};
 
 	static u32 indices[] =
@@ -303,14 +303,11 @@ namespace Mars
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer));
 		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
 
-		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void*)0));
+		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(f32), (void*)0));
 		GLCall(glEnableVertexAttribArray(0));
 
-		GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void*)(3 * sizeof(f32))));
+		GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(f32), (void*)(3 * sizeof(f32))));
 		GLCall(glEnableVertexAttribArray(1));
-
-		GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void*)(6 * sizeof(f32))));
-		GLCall(glEnableVertexAttribArray(2));
 
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -332,11 +329,15 @@ namespace Mars
 
 		glBindTexture(GL_TEXTURE_2D, texture);
 
+		mat4 transform = mat4(1.f);
+		transform *= mat4::Rotate(vec3(0.f, 0.f, 1.f), game_state.elapsed_time);
+		transform *= mat4::Translate(vec3(0.5f, -0.5f, 0.f));
+
 		GLCall(glUseProgram(shader_program));
+		glUniformMatrix4fv(glGetUniformLocation(shader_program, "transform"), 1, GL_FALSE, transform.GetData());
 		GLCall(glBindVertexArray(vertex_array));
 		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
 		SwapBuffers(GetDC(game_state.hwnd));
 	}
 }
-#endif

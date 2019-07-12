@@ -155,7 +155,16 @@ namespace Mars
 			return result;
 		}
         
-#ifndef _WIN32
+#ifdef _WIN32
+		friend std::ostream& operator<<(std::ostream& os, mat4 a)
+		{
+			return os << "\n"
+				<< a.data[0].m128_f32[0] << " " << a.data[0].m128_f32[1] << " " << a.data[0].m128_f32[2] << " " << a.data[0].m128_f32[3] << "\n"
+				<< a.data[1].m128_f32[0] << " " << a.data[1].m128_f32[1] << " " << a.data[1].m128_f32[2] << " " << a.data[1].m128_f32[3] << "\n"
+				<< a.data[2].m128_f32[0] << " " << a.data[2].m128_f32[1] << " " << a.data[2].m128_f32[2] << " " << a.data[2].m128_f32[3] << "\n"
+				<< a.data[3].m128_f32[0] << " " << a.data[3].m128_f32[1] << " " << a.data[3].m128_f32[2] << " " << a.data[3].m128_f32[3] << "\n";
+		}
+#else
         friend std::ostream& operator<<(std::ostream& os, mat4 a)
 		{
 			return os << "\n"
@@ -218,6 +227,30 @@ namespace Mars
 		{
 			a = a * b;
 			return a;
+		}
+
+		MARS_INLINE const f32* GetData()
+		{
+			f32 res[16];
+
+			res[0] = this->data[0].m128_f32[0];
+			res[1] = this->data[0].m128_f32[1];
+			res[2] = this->data[0].m128_f32[2];
+			res[3] = this->data[0].m128_f32[3];
+			res[4] = this->data[1].m128_f32[0];
+			res[5] = this->data[1].m128_f32[1];
+			res[6] = this->data[1].m128_f32[2];
+			res[7] = this->data[1].m128_f32[3];
+			res[8] = this->data[2].m128_f32[0];
+			res[9] = this->data[2].m128_f32[1];
+			res[10] = this->data[2].m128_f32[2];
+			res[11] = this->data[2].m128_f32[3];
+			res[12] = this->data[3].m128_f32[0];
+			res[13] = this->data[3].m128_f32[1];
+			res[14] = this->data[3].m128_f32[2];
+			res[15] = this->data[3].m128_f32[3];
+
+			return res;
 		}
 
 	private:

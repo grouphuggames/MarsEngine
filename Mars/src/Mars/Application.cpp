@@ -49,12 +49,6 @@ namespace Mars
 			RenderScene();
 #endif
 
-			mat4 transform = mat4(1.f);
-			transform *= mat4::Translate(vec3(0.5f, -0.5f, 0.f));
-			transform *= mat4::Rotate(vec3(0.f, 0.f, 1.f), game_state.elapsed_time);
-
-			MARS_CORE_INFO(transform);
-
 			StopTimer(info);
 			game_state.framerate = 1000.f / info.time_delta;
 

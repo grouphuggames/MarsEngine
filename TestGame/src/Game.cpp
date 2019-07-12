@@ -32,8 +32,8 @@ Mars::Application* Mars::CreateApplication()
 {
 	SetInput(MARS_MOUSE_BUTTON_LEFT, Fire);
 	SetInput(MARS_MOUSE_BUTTON_RIGHT, HotReload);
-	game_state.width = 1280;
-	game_state.height = 720;
+	game_state.width = 800;
+	game_state.height = 600;
 
 	return new Game();
 }
