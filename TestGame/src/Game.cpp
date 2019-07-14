@@ -30,8 +30,16 @@ void Fire()
 
 void MoveForward()
 {
-	f32 camera_speed = 2.5 * game_state.current_frame_time;
-	camera_position += camera_speed * camera_front;
+	f32 camera_speed = 3.5f * game_state.current_frame_time;
+	camera_data.camera_position += camera_speed * camera_data.camera_front;
+	MARS_CORE_INFO(camera_data.camera_position);
+}
+
+void MoveBackward()
+{
+	f32 camera_speed = 3.5f * game_state.current_frame_time;
+	camera_data.camera_position -= camera_speed * camera_data.camera_front;
+	MARS_CORE_INFO(camera_data.camera_position);
 }
 
 Mars::Application* Mars::CreateApplication()
@@ -39,6 +47,7 @@ Mars::Application* Mars::CreateApplication()
 	SetInput(MARS_MOUSE_BUTTON_LEFT, Fire);
 	SetInput(MARS_MOUSE_BUTTON_RIGHT, HotReload);
 	SetInput(MARS_W, MoveForward);
+	SetInput(MARS_S, MoveBackward);
 	game_state.width = 800;
 	game_state.height = 600;
 

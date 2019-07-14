@@ -128,7 +128,7 @@ public:
 #endif
 } game_state;
 
-struct
+MARS_API struct
 {
 	s32 core_count;
 } system_info;

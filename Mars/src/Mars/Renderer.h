@@ -9,6 +9,13 @@
 #include "wglext.h"
 
 
+MARS_API struct
+{
+	Mars::vec3 camera_position;
+	Mars::vec3 camera_front;
+	Mars::vec3 camera_up;
+} camera_data;
+
 namespace Mars
 {
 	// OpenGL & Vulkan
@@ -292,18 +299,18 @@ namespace Mars
 	u32 vertex_array;
 	u32 texture;
 
-	vec3 camera_position = vec3(0.f, 0.f, 3.f);
-	vec3 camera_target = vec3(0.f);
-	vec3 camera_direction = vec3::Normalize(camera_position - camera_target);
-	vec3 up = vec3(0.f, 1.f, 0.f);
-	vec3 camera_right = vec3::Normalize(vec3::Cross(up, camera_direction));
-	vec3 camera_up = vec3::Cross(camera_direction, camera_right);
-	vec3 camera_front = vec3(0.f, 0.f, -1.f);
-
 	mat4 view;
 
 	void InitGLScene()
 	{
+		camera_data.camera_position = vec3(0.f, 0.f, 3.f);
+		camera_data.camera_front = vec3(0.f, 0.f, -1.f);
+		vec3 camera_target = vec3(0.f);
+		vec3 camera_direction = vec3::Normalize(camera_data.camera_position - camera_target);
+		vec3 up = vec3(0.f, 1.f, 0.f);
+		vec3 camera_right = vec3::Normalize(vec3::Cross(up, camera_direction));
+		camera_data.camera_up = vec3::Cross(camera_direction, camera_right);
+
 		s32 vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 		GLCall(glShaderSource(vertex_shader, 1, &vertexShaderSource, NULL));
 		GLCall(glCompileShader(vertex_shader));
@@ -391,7 +398,8 @@ namespace Mars
 		mat4 projection(1.f);
 
 		model *= mat4::Rotate(vec3(0.5f, 1.f, 0.f), game_state.elapsed_time * ToRadians(50.f));
-		view *= mat4::LookAtLH(camera_position, camera_position + camera_front, camera_up);
+		view = mat4::LookAtLH(camera_data.camera_position, camera_data.camera_position + camera_data.camera_front, camera_data.camera_up);
+		// view *= 
 		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.width / (f32)game_state.height, 0.1f, 100.f);
 
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, model.GetData());

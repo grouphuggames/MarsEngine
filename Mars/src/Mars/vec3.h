@@ -22,9 +22,23 @@ namespace Mars
 			return a;
 		}
 
+		MARS_INLINE friend vec3 operator+=(vec3& a, vec3 b)
+		{
+			a = a + b;
+
+			return a;
+		}
+
 		MARS_INLINE friend vec3 operator-(vec3 a, vec3 b)
 		{
 			a.data = _mm_sub_ps(a.data, b.data);
+
+			return a;
+		}
+
+		MARS_INLINE friend vec3 operator-=(vec3& a, vec3 b)
+		{
+			a = a - b;
 
 			return a;
 		}
