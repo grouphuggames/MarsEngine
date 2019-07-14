@@ -3,6 +3,7 @@
 #include "vec4.h"
 #include "Debug.h"
 #include "Utils.h"
+#include "Input.h"
 
 
 namespace Mars
@@ -32,6 +33,10 @@ namespace Mars
 			TimerInfo info = {};
 			info.time_scale = MARS_TIME::MARS_MILLISECOND;		// for framerate timer, this must be set to milliseconds
 			StartTimer(info);
+
+			GetKeyboardInput();
+			GetMouseInput();
+
 #ifdef _WIN32
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
@@ -54,6 +59,7 @@ namespace Mars
 
 			StopTimer(engine_timer_info);
 			game_state.elapsed_time = engine_timer_info.time_delta / 1000.f;
+			MARS_CORE_INFO(game_state.elapsed_time);
 		}
 
 		TerminateSystems();

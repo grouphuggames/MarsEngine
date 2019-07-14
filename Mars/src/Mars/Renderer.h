@@ -14,6 +14,8 @@ MARS_API struct
 	Mars::vec3 camera_position;
 	Mars::vec3 camera_front;
 	Mars::vec3 camera_up;
+	f32 yaw;
+	f32 pitch;
 } camera_data;
 
 namespace Mars
@@ -310,6 +312,9 @@ namespace Mars
 		vec3 up = vec3(0.f, 1.f, 0.f);
 		vec3 camera_right = vec3::Normalize(vec3::Cross(up, camera_direction));
 		camera_data.camera_up = vec3::Cross(camera_direction, camera_right);
+
+		camera_data.yaw = -90.f;
+		camera_data.pitch = 0.f;
 
 		s32 vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 		GLCall(glShaderSource(vertex_shader, 1, &vertexShaderSource, NULL));
