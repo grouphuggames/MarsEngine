@@ -4,9 +4,7 @@
 #include "vec4.h"
 #include "mat4.h"
 #include "Debug.h"
-#include <gl/GL.h>
-#include "glext.h"
-#include "wglext.h"
+#include "GLFunctions.h"
 
 
 MARS_API struct
@@ -21,56 +19,6 @@ MARS_API struct
 namespace Mars
 {
 	// OpenGL & Vulkan
-	PFNGLGENBUFFERSPROC glGenBuffers;
-	PFNGLBINDBUFFERPROC glBindBuffer;
-	PFNGLBUFFERDATAPROC glBufferData;
-	PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
-	PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
-	PFNGLCREATESHADERPROC glCreateShader;
-	PFNGLSHADERSOURCEPROC glShaderSource;
-	PFNGLCOMPILESHADERPROC glCompileShader;
-	PFNGLGETSHADERIVPROC glGetShaderiv;
-	PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
-	PFNGLCREATEPROGRAMPROC glCreateProgram;
-	PFNGLATTACHSHADERPROC glAttachShader;
-	PFNGLGETPROGRAMIVPROC glGetProgramiv;
-	PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
-	PFNGLDELETESHADERPROC glDeleteShader;
-	PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
-	PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
-	PFNGLUSEPROGRAMPROC glUseProgram;
-	PFNGLLINKPROGRAMPROC glLinkProgram;
-	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
-	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
-	PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
-	PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
-	PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-
-#ifdef _WIN32
-#define ASSERT(x) if (!(x)) __debugbreak();
-#else
-#define ASSERT(x)
-#endif
-#define GLCall(x) GLClearError();\
-	x;\
-	ASSERT(GLLogCall())
-
-	static void GLClearError()
-	{
-		while (glGetError() != GL_NO_ERROR);
-	}
-
-	static bool GLLogCall()
-	{
-		while (u32 error = glGetError())
-		{
-			MARS_CORE_ERROR(error);
-			return false;
-		}
-
-		return true;
-	}
-
 	const char *vertexShaderSource = "#version 460 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
 		"layout (location = 1) in vec2 aTexCoord;\n"
@@ -157,30 +105,7 @@ namespace Mars
 
 		wglMakeCurrent(device_context, tmp_render_context);
 
-		glGenBuffers = (PFNGLGENBUFFERSPROC)wglGetProcAddress("glGenBuffers");
-		glBindBuffer = (PFNGLBINDBUFFERPROC)wglGetProcAddress("glBindBuffer");
-		glBufferData = (PFNGLBUFFERDATAPROC)wglGetProcAddress("glBufferData");
-		glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)wglGetProcAddress("glEnableVertexAttribArray");
-		glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)wglGetProcAddress("glVertexAttribPointer");
-		glCreateShader = (PFNGLCREATESHADERPROC)wglGetProcAddress("glCreateShader");
-		glShaderSource = (PFNGLSHADERSOURCEPROC)wglGetProcAddress("glShaderSource");
-		glCompileShader = (PFNGLCOMPILESHADERPROC)wglGetProcAddress("glCompileShader");
-		glGetShaderiv = (PFNGLGETSHADERIVPROC)wglGetProcAddress("glGetShaderiv");
-		glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)wglGetProcAddress("glGetShaderInfoLog");
-		glCreateProgram = (PFNGLCREATEPROGRAMPROC)wglGetProcAddress("glCreateProgram");
-		glAttachShader = (PFNGLATTACHSHADERPROC)wglGetProcAddress("glAttachShader");
-		glGetProgramiv = (PFNGLGETPROGRAMIVPROC)wglGetProcAddress("glGetProgramiv");
-		glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)wglGetProcAddress("glGetProgramInfoLog");
-		glDeleteShader = (PFNGLDELETESHADERPROC)wglGetProcAddress("glDeleteShader");
-		glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)wglGetProcAddress("glGenVertexArrays");
-		glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)wglGetProcAddress("glBindVertexArray");
-		glUseProgram = (PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram");
-		glLinkProgram = (PFNGLLINKPROGRAMPROC)wglGetProcAddress("glLinkProgram");
-		wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
-		wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
-		glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)wglGetProcAddress("glGenerateMipmap");
-		glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)wglGetProcAddress("glUniformMatrix4fv");
-		glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation");
+		InitGLFunctions();
 
 		s32 pixel_format_index;
 		u32 num_formats;
@@ -404,7 +329,6 @@ namespace Mars
 
 		model *= mat4::Rotate(vec3(0.5f, 1.f, 0.f), game_state.elapsed_time * ToRadians(50.f));
 		view = mat4::LookAtLH(camera_data.camera_position, camera_data.camera_position + camera_data.camera_front, camera_data.camera_up);
-		// view *= 
 		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.width / (f32)game_state.height, 0.1f, 100.f);
 
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, model.GetData());
