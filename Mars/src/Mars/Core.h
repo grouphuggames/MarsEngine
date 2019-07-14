@@ -114,10 +114,12 @@ MARS_API struct
 {
 public:
 	const char* window_title = "GameWindow";
-	s32 width;
-	s32 height;
+	s32 width = 0;
+	s32 height = 0;
 	f32 framerate = 0.f;
 	f32 elapsed_time = 0.f;
+	f32 current_frame_time = 0.f;
+	f32 last_frame_time = 0.f;
 	bool running = true;
 	bool fullscreen = false;
 #ifdef _WIN32

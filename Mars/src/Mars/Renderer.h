@@ -292,6 +292,16 @@ namespace Mars
 	u32 vertex_array;
 	u32 texture;
 
+	vec3 camera_position = vec3(0.f, 0.f, 3.f);
+	vec3 camera_target = vec3(0.f);
+	vec3 camera_direction = vec3::Normalize(camera_position - camera_target);
+	vec3 up = vec3(0.f, 1.f, 0.f);
+	vec3 camera_right = vec3::Normalize(vec3::Cross(up, camera_direction));
+	vec3 camera_up = vec3::Cross(camera_direction, camera_right);
+	vec3 camera_front = vec3(0.f, 0.f, -1.f);
+
+	mat4 view;
+
 	void InitGLScene()
 	{
 		s32 vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -358,7 +368,7 @@ namespace Mars
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		GLTexture wall = LoadBMP("C://MarsEngine//Mars//res//wall.bmp");
+		GLTexture wall = LoadBMP("C://MarsEngine//Mars//res//wall.bmp");	// still using temporary path. maybe create filesystem for engine
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wall.width, wall.height, 0, GL_BGR, GL_UNSIGNED_BYTE, wall.data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		free(wall.data);
@@ -366,6 +376,10 @@ namespace Mars
 
 	void RenderScene()
 	{
+		f32 current_frame = game_state.elapsed_time;
+		game_state.current_frame_time = current_frame - game_state.last_frame_time;
+		game_state.last_frame_time = current_frame;
+
 		GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -374,11 +388,10 @@ namespace Mars
 		GLCall(glUseProgram(shader_program));
 		
 		mat4 model(1.f);
-		mat4 view(1.f);
 		mat4 projection(1.f);
 
 		model *= mat4::Rotate(vec3(0.5f, 1.f, 0.f), game_state.elapsed_time * ToRadians(50.f));
-		view *= mat4::Translate(vec3(0.f, 0.f, 3.f));
+		view *= mat4::LookAtLH(camera_position, camera_position + camera_front, camera_up);
 		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.width / (f32)game_state.height, 0.1f, 100.f);
 
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, model.GetData());
