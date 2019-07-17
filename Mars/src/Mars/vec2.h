@@ -10,7 +10,7 @@ namespace Mars
 	{
 	public:
 		MARS_INLINE vec2() : data(_mm_set_ps1(0.f)) {}
-		MARS_INLINE explicit vec2(f32 val) : data(_mm_set_ps(0.f, val, val, val)) {}
+		MARS_INLINE explicit vec2(f32 val) : data(_mm_set_ps(0.f, 0.f, val, val)) {}
 		MARS_INLINE explicit vec2(f32 _x, f32 _y) : data(_mm_set_ps(0.f, 0.f, _y, _x)) {}
 
 		MARS_INLINE friend vec2 operator+(vec2 a, vec2 b)

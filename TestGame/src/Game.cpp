@@ -24,28 +24,24 @@ void MoveForward()
 {
 	f32 camera_speed = 2.5f * game_state.current_frame_time;
 	camera_data.camera_position += camera_speed * camera_data.camera_front;
-	MARS_CORE_INFO(camera_data.camera_position);
 }
 
 void MoveBackward()
 {
 	f32 camera_speed = 2.5f * game_state.current_frame_time;
 	camera_data.camera_position -= camera_speed * camera_data.camera_front;
-	MARS_CORE_INFO(camera_data.camera_position);
 }
 
 void MoveLeft()
 {
 	f32 camera_speed = 2.5f * game_state.current_frame_time;
 	camera_data.camera_position += Mars::vec3::Normalize(Mars::vec3::Cross(camera_data.camera_front, camera_data.camera_up)) * camera_speed;
-	MARS_CORE_INFO(camera_data.camera_position);
 }
 
 void MoveRight()
 {
 	f32 camera_speed = 2.5f * game_state.current_frame_time;
 	camera_data.camera_position -= Mars::vec3::Normalize(Mars::vec3::Cross(camera_data.camera_front, camera_data.camera_up)) * camera_speed;
-	MARS_CORE_INFO(camera_data.camera_position);
 }
 
 // end of external functions
@@ -56,8 +52,8 @@ Mars::Application* Mars::CreateApplication()
 	SetInput(MARS_S, MoveBackward);
 	SetInput(MARS_A, MoveLeft);
 	SetInput(MARS_D, MoveRight);
-	game_state.width = 1280;
-	game_state.height = 720;
+	game_state.window_width = 1280;
+	game_state.window_height = 720;
 
 	return new Game();
 }

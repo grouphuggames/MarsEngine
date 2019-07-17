@@ -1,45 +1,19 @@
 #pragma once
 #include "Core.h"
+#include "vec2.h"
 #include "vec3.h"
 #include "vec4.h"
 #include "mat4.h"
 #include "Debug.h"
 #include "GLFunctions.h"
+#include "GLShader.h"
+#include "Camera.h"
+#include "MVector.h"
 
-
-MARS_API struct
-{
-	Mars::vec3 camera_position;
-	Mars::vec3 camera_front;
-	Mars::vec3 camera_up;
-	f32 yaw;
-	f32 pitch;
-} camera_data;
 
 namespace Mars
 {
 	// OpenGL & Vulkan
-	const char *vertexShaderSource = "#version 460 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"layout (location = 1) in vec2 aTexCoord;\n"
-		"out vec2 TexCoord;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
-		"	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
-		"}\0";
-	const char *fragmentShaderSource = "#version 460 core\n"
-		"out vec4 FragColor;\n"
-		"in vec3 ourColor;\n"
-		"in vec2 TexCoord;\n"
-		"uniform sampler2D texture1;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = texture(texture1, TexCoord);\n"
-		"}\n\0";
 
 	const s32 pixel_format_attrib_list[] = 
 	{
@@ -169,6 +143,25 @@ namespace Mars
 		return res;
 	}
 
+	u32 CreateTexture(const char* path)
+	{
+		u32 texture;
+
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		GLTexture wall = LoadBMP(path);	// still using temporary path. maybe create filesystem for engine
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wall.width, wall.height, 0, GL_BGR, GL_UNSIGNED_BYTE, wall.data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		free(wall.data);
+
+		return texture;
+	}
+
 	u32 vertex_buffer;
 	u32 element_buffer;
 
@@ -230,55 +223,17 @@ namespace Mars
 
 	void InitGLScene()
 	{
-		camera_data.camera_position = vec3(0.f, 0.f, 3.f);
-		camera_data.camera_front = vec3(0.f, 0.f, -1.f);
-		vec3 camera_target = vec3(0.f);
-		vec3 camera_direction = vec3::Normalize(camera_data.camera_position - camera_target);
-		vec3 up = vec3(0.f, 1.f, 0.f);
-		vec3 camera_right = vec3::Normalize(vec3::Cross(up, camera_direction));
-		camera_data.camera_up = vec3::Cross(camera_direction, camera_right);
+		CreateCamera();
 
-		camera_data.yaw = -90.f;
-		camera_data.pitch = 0.f;
+		s32 vertex_shader = CreateShader(GL_VERTEX_SHADER, "C://MarsEngine//Mars//res//test_vs.vs");
+		s32 fragment_shader = CreateShader(GL_FRAGMENT_SHADER, "C://MarsEngine//Mars//res//test_fs.fs");
 
-		s32 vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-		GLCall(glShaderSource(vertex_shader, 1, &vertexShaderSource, NULL));
-		GLCall(glCompileShader(vertex_shader));
-
-		s32 success;
-		char info_log[512];
-		GLCall(glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success));
-		if (!success)
-		{
-			GLCall(glGetShaderInfoLog(vertex_shader, 512, NULL, info_log));
-			MARS_CORE_ERROR(info_log);
-		}
-
-		s32 fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-		GLCall(glShaderSource(fragment_shader, 1, &fragmentShaderSource, NULL));
-		GLCall(glCompileShader(fragment_shader));
-
-		GLCall(glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success));
-		if (!success)
-		{
-			GLCall(glGetShaderInfoLog(vertex_shader, 512, NULL, info_log));
-			MARS_CORE_ERROR(info_log);
-		}
-
-		shader_program = glCreateProgram();
-		GLCall(glAttachShader(shader_program, vertex_shader));
-		GLCall(glAttachShader(shader_program, fragment_shader));
-		GLCall(glLinkProgram(shader_program));
-
-		GLCall(glGetProgramiv(shader_program, GL_LINK_STATUS, &success));
-		if (!success)
-		{
-			GLCall(glGetProgramInfoLog(shader_program, 512, NULL, info_log));
-			MARS_CORE_ERROR(info_log);
-		}
+		shader_program = CreateShaderProgram(vertex_shader, fragment_shader);
 
 		GLCall(glDeleteShader(vertex_shader));
 		GLCall(glDeleteShader(fragment_shader));
+
+		// load obj here
 
 		GLCall(glGenVertexArrays(1, &vertex_array));
 		GLCall(glGenBuffers(1, &vertex_buffer));
@@ -298,17 +253,7 @@ namespace Mars
 		GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(f32), (void*)(3 * sizeof(f32))));
 		GLCall(glEnableVertexAttribArray(1));
 
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		GLTexture wall = LoadBMP("C://MarsEngine//Mars//res//wall.bmp");	// still using temporary path. maybe create filesystem for engine
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wall.width, wall.height, 0, GL_BGR, GL_UNSIGNED_BYTE, wall.data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		free(wall.data);
+		texture = CreateTexture("C://MarsEngine//Mars//res//wall.bmp");
 	}
 
 	void RenderScene()
@@ -327,9 +272,9 @@ namespace Mars
 		mat4 model(1.f);
 		mat4 projection(1.f);
 
-		model *= mat4::Rotate(vec3(0.5f, 1.f, 0.f), game_state.elapsed_time * ToRadians(50.f));
+		model *= mat4::Rotate(vec3(0.5f, 1.f, 0.1f), game_state.elapsed_time * ToRadians(50.f));
 		view = mat4::LookAtLH(camera_data.camera_position, camera_data.camera_position + camera_data.camera_front, camera_data.camera_up);
-		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.width / (f32)game_state.height, 0.1f, 100.f);
+		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.window_width / (f32)game_state.window_height, 0.1f, 100.f);
 
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, model.GetData());
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "view"), 1, GL_FALSE, view.GetData());

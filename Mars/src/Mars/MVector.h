@@ -19,7 +19,7 @@ namespace Mars
 
 			for (s32 i = 0; i < sz; ++i) { new_arr[i] = data[i]; }
 			capacity = sz;
-			size = sz;
+			// size = sz;
 
 			delete[] data;
 			data = new_arr;

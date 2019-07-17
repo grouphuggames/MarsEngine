@@ -17,8 +17,8 @@ namespace Mars
 			MONITORINFO mi = { sizeof(mi) };
 			GetMonitorInfo(hmon, &mi);
 
-			game_state.width = mi.rcMonitor.right - mi.rcMonitor.left;
-			game_state.height = mi.rcMonitor.bottom - mi.rcMonitor.top;
+			game_state.window_width = mi.rcMonitor.right - mi.rcMonitor.left;
+			game_state.window_height = mi.rcMonitor.bottom - mi.rcMonitor.top;
 		}
 
 		WNDCLASSEX wc;
@@ -37,7 +37,7 @@ namespace Mars
 
 		RegisterClassEx(&wc);
 
-		game_state.hwnd = CreateWindowEx(NULL, window_name, game_state.window_title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, game_state.width, game_state.height, NULL, NULL, hInstance, NULL);
+		game_state.hwnd = CreateWindowEx(NULL, window_name, game_state.window_title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, game_state.window_width, game_state.window_height, NULL, NULL, hInstance, NULL);
 		if (!game_state.hwnd)
 		{
 			MARS_CORE_ERROR("Error Creating WIN32 Window!!");

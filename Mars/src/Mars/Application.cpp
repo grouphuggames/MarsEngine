@@ -30,10 +30,6 @@ namespace Mars
 
 		while (game_state.running)
 		{
-			TimerInfo info = {};
-			info.time_scale = MARS_TIME::MARS_MILLISECOND;		// for framerate timer, this must be set to milliseconds
-			StartTimer(info);
-
 			GetKeyboardInput();
 			GetMouseInput();
 
@@ -54,12 +50,8 @@ namespace Mars
 			RenderScene();
 #endif
 
-			StopTimer(info);
-			game_state.framerate = 1000.f / info.time_delta;
-
 			StopTimer(engine_timer_info);
 			game_state.elapsed_time = engine_timer_info.time_delta / 1000.f;
-			MARS_CORE_INFO(game_state.elapsed_time);
 		}
 
 		TerminateSystems();
