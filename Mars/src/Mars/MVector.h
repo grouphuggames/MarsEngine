@@ -13,15 +13,13 @@ namespace Mars
 
 		void Resize(s32 sz)
 		{
-			//if (sz <= capacity) return;		-- idk why this line is here and i'm not sure if it's important...if something breaks try to comment this out
-
 			T* new_arr = new T[sz];
 
-			for (s32 i = 0; i < sz; ++i) { new_arr[i] = data[i]; }
+			for (s32 i = 0; i < this->size; ++i) { new_arr[i] = data[i]; }
 			capacity = sz;
-			// size = sz;
 
 			delete[] data;
+			data = nullptr;
 			data = new_arr;
 		}
 

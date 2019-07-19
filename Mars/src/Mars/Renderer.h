@@ -9,6 +9,8 @@
 #include "GLShader.h"
 #include "Camera.h"
 #include "MVector.h"
+#include <vector>
+#include <cstdio>
 
 
 namespace Mars
@@ -143,6 +145,93 @@ namespace Mars
 		return res;
 	}
 
+	bool LoadOBJ(const char* path, MVector<vec3>& out_verts, MVector<vec2>& out_uvs, MVector<vec3>& out_normals)
+	{
+		MVector<u32> vert_indices, uv_indices, normal_indices;
+		MVector<vec3> tmp_verts;
+		MVector<vec2> tmp_uvs;
+		MVector<vec3> tmp_normals;
+
+		FILE* file = fopen(path, "r");
+		if (!file)
+		{
+			MARS_CORE_ERROR("Could not open file: ", path);
+			return false;
+		}
+
+		while (true)
+		{
+			char header[128];
+
+			int res = fscanf(file, "%s", header);
+			if (res == EOF)
+			{
+				break;
+			}
+
+			if (strcmp(header, "v") == 0)
+			{
+				f32 x, y, z;
+				fscanf(file, "%f %f %f", &x, &y, &z);
+				tmp_verts.PushBack(vec3(x, y, z));
+			}
+			else if (strcmp(header, "vt") == 0)
+			{
+				f32 x, y;
+				fscanf(file, "%f %f %f", &x, &y);
+				tmp_uvs.PushBack(vec2(x, y));
+			}
+			else if (strcmp(header, "vn") == 0)
+			{
+				f32 x, y, z;
+				fscanf(file, "%f %f %f", &x, &y, &z);
+				tmp_normals.PushBack(vec3(x, y, z));
+			}
+			else if (strcmp(header, "f") == 0)
+			{
+				u32 vert_index[3], uv_index[3], normal_index[3];
+
+				s32 matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vert_index[0], &uv_index[0], &normal_index[0], &vert_index[1], &uv_index[1], &normal_index[1], &vert_index[2], &uv_index[2], &normal_index[2]);
+				if (matches != 9)
+				{
+					MARS_CORE_ERROR("File cannot be parsed correctly. Make sure you are exporting with the proper options!!");
+					return false;
+				}
+
+				vert_indices.PushBack(vert_index[0]);
+				vert_indices.PushBack(vert_index[1]);
+				vert_indices.PushBack(vert_index[2]);
+				uv_indices.PushBack(uv_index[0]);
+				uv_indices.PushBack(uv_index[1]);
+				uv_indices.PushBack(uv_index[2]);
+				normal_indices.PushBack(normal_index[0]);
+				normal_indices.PushBack(normal_index[1]);
+				normal_indices.PushBack(normal_index[2]);
+			}
+		}
+
+		for (u32 i = 0; i < vert_indices.Size(); i++)
+		{
+			u32 vert_index = vert_indices[i];
+			vec3 vert = tmp_verts[vert_index - 1];
+			out_verts.PushBack(vert);
+		}
+
+		for (u32 i = 0; i < uv_indices.Size(); i++)
+		{
+			u32 uv_index = uv_indices[i];
+			vec2 uv = tmp_uvs[uv_index - 1];
+			out_uvs.PushBack(uv);
+		}
+
+		for (u32 i = 0; i < normal_indices.Size(); i++)
+		{
+			u32 normal_index = normal_indices[i];
+			vec3 normal = tmp_normals[normal_index - 1];
+			out_normals.PushBack(normal);
+		}
+	}
+
 	u32 CreateTexture(const char* path)
 	{
 		u32 texture;
@@ -165,61 +254,15 @@ namespace Mars
 	u32 vertex_buffer;
 	u32 element_buffer;
 
-	float vertex_buffer_data[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	static u32 indices[] =
-	{
-		0, 1, 3,
-		1, 2, 3
-	};
-
 	s32 shader_program;
 	u32 vertex_array;
 	u32 texture;
 
 	mat4 view;
+
+	MVector<vec3> verts;
+	MVector<vec2> uvs;
+	MVector<vec3> normals;
 
 	void InitGLScene()
 	{
@@ -234,6 +277,7 @@ namespace Mars
 		GLCall(glDeleteShader(fragment_shader));
 
 		// load obj here
+		LoadOBJ("C://MarsEngine//Mars//res//monkey.obj", verts, uvs, normals);
 
 		GLCall(glGenVertexArrays(1, &vertex_array));
 		GLCall(glGenBuffers(1, &vertex_buffer));
@@ -242,16 +286,13 @@ namespace Mars
 		GLCall(glBindVertexArray(vertex_array));
 
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, verts.Size() * sizeof(vec3), &verts[0], GL_STATIC_DRAW));
 
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
-
-		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(f32), (void*)0));
 		GLCall(glEnableVertexAttribArray(0));
+		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0));
 
-		GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(f32), (void*)(3 * sizeof(f32))));
 		GLCall(glEnableVertexAttribArray(1));
+		GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)(3 * sizeof(f32))));
 
 		texture = CreateTexture("C://MarsEngine//Mars//res//wall.bmp");
 	}
@@ -281,8 +322,7 @@ namespace Mars
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, projection.GetData());
 
 		GLCall(glBindVertexArray(vertex_array));
-		//GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, verts.Size());
 
 		SwapBuffers(GetDC(game_state.hwnd));
 	}
