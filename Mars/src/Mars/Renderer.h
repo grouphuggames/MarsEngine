@@ -9,7 +9,6 @@
 #include "GLShader.h"
 #include "Camera.h"
 #include "MVector.h"
-#include <vector>
 #include <cstdio>
 
 
@@ -145,12 +144,23 @@ namespace Mars
 		return res;
 	}
 
-	bool LoadOBJ(const char* path, MVector<vec3>& out_verts, MVector<vec2>& out_uvs, MVector<vec3>& out_normals)
+	struct Vertex
+	{
+		vec3 position;
+		vec3 normal;
+		vec2 uv;
+	};
+
+	bool LoadOBJ(const char* path, MVector<Vertex>& verts)
 	{
 		MVector<u32> vert_indices, uv_indices, normal_indices;
 		MVector<vec3> tmp_verts;
 		MVector<vec2> tmp_uvs;
 		MVector<vec3> tmp_normals;
+
+		MVector<vec3> out_verts;
+		MVector<vec2> out_uvs;
+		MVector<vec3> out_normals;
 
 		FILE* file = fopen(path, "r");
 		if (!file)
@@ -230,6 +240,16 @@ namespace Mars
 			vec3 normal = tmp_normals[normal_index - 1];
 			out_normals.PushBack(normal);
 		}
+
+		s32 total_verts = Max(Max(out_verts.Size(), out_uvs.Size()), out_normals.Size());	// set this equal to the max value between out_verts.Size(), out_uvs.Size(), and out_normals.Size()
+		for (s32 i = 0; i < total_verts; i++)
+		{
+			Vertex vertex;
+			vertex.position = out_verts[i];
+			vertex.normal = out_normals[i];
+			vertex.uv = out_uvs[i];
+			verts.PushBack(vertex);
+		}
 	}
 
 	u32 CreateTexture(const char* path)
@@ -260,9 +280,8 @@ namespace Mars
 
 	mat4 view;
 
-	MVector<vec3> verts;
-	MVector<vec2> uvs;
-	MVector<vec3> normals;
+	MVector<Vertex> monkey_verts;
+	MVector<u32> indices;
 
 	void InitGLScene()
 	{
@@ -277,7 +296,48 @@ namespace Mars
 		GLCall(glDeleteShader(fragment_shader));
 
 		// load obj here
-		LoadOBJ("C://MarsEngine//Mars//res//monkey.obj", verts, uvs, normals);
+		LoadOBJ("C://MarsEngine//Mars//res//crazymonkey.obj", monkey_verts);
+		
+
+
+
+		// this algorithm needs to be moved into LoadOBJ to prevent duplicate vertices from even being pushed back into the vertex vector
+		struct IndexPair
+		{
+			u32 index;
+			vec3 value;
+		};
+
+		MVector<IndexPair> other_vals;
+
+		for (u32 i = 0; i < monkey_verts.Size(); i++)
+		{
+			if (i == 0)		// for better branch prediction (and hopefully performance), move this out of the for loop since this only happens when i = 0, that removes the if from the loop
+			{
+				IndexPair tmp;
+				tmp.index = i;
+				tmp.value = monkey_verts[i].position;
+				other_vals.PushBack(tmp);
+				indices.PushBack(i);
+				continue;
+			}
+
+			for (u32 j = 0; j < other_vals.Size(); j++)
+			{
+				if (monkey_verts[i].position == other_vals[j].value)
+				{
+					indices.PushBack(j);
+				}
+				else
+				{
+					indices.PushBack(i);
+				}
+			}
+		}
+
+
+
+
 
 		GLCall(glGenVertexArrays(1, &vertex_array));
 		GLCall(glGenBuffers(1, &vertex_buffer));
@@ -286,13 +346,19 @@ namespace Mars
 		GLCall(glBindVertexArray(vertex_array));
 
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, verts.Size() * sizeof(vec3), &verts[0], GL_STATIC_DRAW));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, monkey_verts.Size() * sizeof(Vertex), &monkey_verts[0], GL_STATIC_DRAW));
+
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.Size() * sizeof(u32), &indices[0], GL_STATIC_DRAW));
 
 		GLCall(glEnableVertexAttribArray(0));
-		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0));
+		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0));
 
 		GLCall(glEnableVertexAttribArray(1));
-		GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)(3 * sizeof(f32))));
+		GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(vec3))));
+
+		GLCall(glEnableVertexAttribArray(2));
+		GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(2 * sizeof(vec3))));
 
 		texture = CreateTexture("C://MarsEngine//Mars//res//wall.bmp");
 	}
@@ -313,7 +379,7 @@ namespace Mars
 		mat4 model(1.f);
 		mat4 projection(1.f);
 
-		model *= mat4::Rotate(vec3(0.5f, 1.f, 0.1f), game_state.elapsed_time * ToRadians(50.f));
+		model *= mat4::Rotate(vec3(1.f, 0.5f, 0.1f), game_state.elapsed_time * ToRadians(70.f));
 		view = mat4::LookAtLH(camera_data.camera_position, camera_data.camera_position + camera_data.camera_front, camera_data.camera_up);
 		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.window_width / (f32)game_state.window_height, 0.1f, 100.f);
 
@@ -322,7 +388,8 @@ namespace Mars
 		glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, projection.GetData());
 
 		GLCall(glBindVertexArray(vertex_array));
-		glDrawArrays(GL_TRIANGLES, 0, verts.Size());
+		//glDrawArrays(GL_TRIANGLES, 0, monkey_verts.Size());
+		glDrawElements(GL_TRIANGLES, indices.Size(), GL_UNSIGNED_INT, (void*)0);
 
 		SwapBuffers(GetDC(game_state.hwnd));
 	}

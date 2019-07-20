@@ -43,6 +43,18 @@ namespace Mars
 			return a;
 		}
 
+		MARS_INLINE friend bool operator==(const vec3& a, const vec3 b)
+		{
+			if (a.x() == b.x() && a.y() == b.y() && a.z() == b.z())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		MARS_INLINE friend vec3 operator*(vec3 a, vec3 b)
 		{
 			a.data = _mm_mul_ps(a.data, b.data);
