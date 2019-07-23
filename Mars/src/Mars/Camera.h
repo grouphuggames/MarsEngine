@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "vec3.h"
+#include "mat4.h"
 
 
 MARS_API struct
@@ -11,6 +12,7 @@ MARS_API struct
 	Mars::vec3 camera_right;
 	Mars::vec3 camera_target;
 	Mars::vec3 camera_direction;
+	Mars::mat4 view;
 	f32 yaw;
 	f32 pitch;
 } camera_data;

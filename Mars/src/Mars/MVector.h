@@ -11,18 +11,6 @@ namespace Mars
 		s32 capacity;
 		s32 size;
 
-		void Resize(s32 sz)
-		{
-			T* new_arr = new T[sz];
-
-			for (s32 i = 0; i < this->size; ++i) { new_arr[i] = data[i]; }
-			capacity = sz;
-
-			delete[] data;
-			data = nullptr;
-			data = new_arr;
-		}
-
 	public:
 		MVector<T>() : capacity(10), size(0) { data = new T[capacity]; }
 		MVector<T>(s32 _size) : capacity(_size + 1), size(0) { data = new T[capacity]; }
@@ -61,6 +49,18 @@ namespace Mars
 			}
 
 			return -1;
+		}
+
+		void Resize(s32 sz)
+		{
+			T* new_arr = new T[sz];
+
+			for (s32 i = 0; i < this->size; ++i) { new_arr[i] = data[i]; }
+			capacity = sz;
+
+			delete[] data;
+			data = nullptr;
+			data = new_arr;
 		}
 
 		void PushBack(T val)

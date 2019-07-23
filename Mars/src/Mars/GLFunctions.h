@@ -56,6 +56,9 @@ namespace Mars
 	PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 	PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
 	PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+	PFNGLUNIFORM3FPROC glUniform3f;
+	PFNGLUNIFORM1FPROC glUniform1f;
+	PFNGLUNIFORM1IPROC glUniform1i;
 
 	void InitGLFunctions()
 	{
@@ -83,5 +86,8 @@ namespace Mars
 		glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)wglGetProcAddress("glGenerateMipmap");
 		glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)wglGetProcAddress("glUniformMatrix4fv");
 		glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation");
+		glUniform3f = (PFNGLUNIFORM3FPROC)wglGetProcAddress("glUniform3f");
+		glUniform1f = (PFNGLUNIFORM1FPROC)wglGetProcAddress("glUniform1f");
+		glUniform1i = (PFNGLUNIFORM1IPROC)wglGetProcAddress("glUniform1i");
 	}
 }

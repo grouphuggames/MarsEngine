@@ -70,4 +70,19 @@ namespace Mars
 
 		return shader_program;
 	}
+
+	void SetUniformVec3(s32 shader_program, const char* uniform_name, vec3 uniform_value)
+	{
+		glUniform3f(glGetUniformLocation(shader_program, uniform_name), uniform_value.x(), uniform_value.y(), uniform_value.z());
+	}
+
+	void SetUniformFloat(s32 shader_program, const char* uniform_name, f32 uniform_value)
+	{
+		glUniform1f(glGetUniformLocation(shader_program, uniform_name), uniform_value);
+	}
+
+	void SetUniformInt(s32 shader_program, const char* uniform_name, s32 uniform_value)
+	{
+		glUniform1i(glGetUniformLocation(shader_program, uniform_name), uniform_value);
+	}
 }
