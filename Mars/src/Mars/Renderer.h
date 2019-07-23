@@ -224,9 +224,9 @@ namespace Mars
 		view = mat4::LookAtLH(camera_data.camera_position, camera_data.camera_position + camera_data.camera_front, camera_data.camera_up);
 		projection *= mat4::PerspectiveFovLH(ToRadians(45.f), (f32)game_state.window_width / (f32)game_state.window_height, 0.1f, 100.f);
 
-		glUniformMatrix4fv(glGetUniformLocation(monkey_shader_program, "model"), 1, GL_FALSE, monkey_model.GetData());
-		glUniformMatrix4fv(glGetUniformLocation(monkey_shader_program, "view"), 1, GL_FALSE, view.GetData());
-		glUniformMatrix4fv(glGetUniformLocation(monkey_shader_program, "projection"), 1, GL_FALSE, projection.GetData());
+		SetUniformMat4(monkey_shader_program, "model", monkey_model);
+		SetUniformMat4(monkey_shader_program, "view", view);
+		SetUniformMat4(monkey_shader_program, "projection", projection);
 
 		GLCall(glBindVertexArray(monkey_vertex_array));
 		glDrawElements(GL_TRIANGLES, monkey_indices.Size(), GL_UNSIGNED_INT, (void*)0);
@@ -237,9 +237,9 @@ namespace Mars
 
 		mat4 sphere_model = mat4::Translate(vec3(5.f, 0.5f, 0.1f));
 
-		glUniformMatrix4fv(glGetUniformLocation(sphere_shader_program, "model"), 1, GL_FALSE, sphere_model.GetData());
-		glUniformMatrix4fv(glGetUniformLocation(sphere_shader_program, "view"), 1, GL_FALSE, view.GetData());
-		glUniformMatrix4fv(glGetUniformLocation(sphere_shader_program, "projection"), 1, GL_FALSE, projection.GetData());
+		SetUniformMat4(sphere_shader_program, "model", sphere_model);
+		SetUniformMat4(sphere_shader_program, "view", view);
+		SetUniformMat4(sphere_shader_program, "projection", projection);
 
 		GLCall(glBindVertexArray(sphere_vertex_array));
 		glDrawElements(GL_TRIANGLES, sphere_indices.Size(), GL_UNSIGNED_INT, (void*)0);

@@ -85,4 +85,9 @@ namespace Mars
 	{
 		glUniform1i(glGetUniformLocation(shader_program, uniform_name), uniform_value);
 	}
+
+	void SetUniformMat4(s32 shader_program, const char* uniform_name, mat4 uniform_value)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(shader_program, uniform_name), 1, GL_FALSE, uniform_value.GetData());
+	}
 }
